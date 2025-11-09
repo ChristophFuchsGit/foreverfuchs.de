@@ -158,10 +158,10 @@ footer{border-top:3px solid var(--gold);background:#c5ac98}
   border: 0;
   border-radius: 14px;
   box-shadow: 0 1px 2px rgba(0, 0, 0, .06);
-  filter: sepia(100%);
+  filter: grayscale(100%);
   transition: filter 0.3s ease;
 }
-.map-embed:hover { }
+.map-embed:hover { filter: brightness(1); }
 
 .hero__fade{
   position:absolute;
@@ -169,7 +169,13 @@ footer{border-top:3px solid var(--gold);background:#c5ac98}
   height:min(18vh, 220px);
   pointer-events:none;
   z-index:2;
-  
+  background:
+    linear-gradient(
+      to bottom,
+      rgba(197,172,152,0) 0%,
+      rgba(197,172,152,.85) 60%,
+      #c5ac98 100%
+    );
 }
 
 /* ======= DARK SECTION – passend zum Hero ======= */
@@ -213,9 +219,10 @@ footer{border-top:3px solid var(--gold);background:#c5ac98}
   border-radius: 16px;
   border: 2px solid rgba(255,250,247,.25);
   box-shadow: 0 10px 30px rgba(0,0,0,.35);
-  filter: grayscale(100%);
+  filter: grayscale(100%) brightness(.9) contrast(1.05) saturate(.9);
   transition: filter .35s ease, transform .35s ease, box-shadow .35s ease;
 }
+.dark .map-embed:hover{ filter: grayscale(0%) brightness(1); transform: translateY(-2px); box-shadow: 0 14px 36px rgba(0,0,0,.45); }
 
 @media (max-width: 859px){ .dark .grid{ gap: 1rem; } }
 
@@ -468,7 +475,7 @@ html, body { overscroll-behavior-y: none; } /* optional – verändert das Scrol
             </a>
             <a 
               class="badge" 
-              href="https://wa.me/491755883342?text=Hallo%20Denise%20und%20Chris,%20ich%20habe%20eine%20Frage%20zu%20den%20Geschenken%20🙂" 
+              href="https://wa.me/491701234567?text=Hallo%20Denise%20und%20Chris,%20ich%20habe%20eine%20Frage%20zu%20den%20Geschenken%20🙂" 
               target="_blank"
               rel="noopener noreferrer"
             >
