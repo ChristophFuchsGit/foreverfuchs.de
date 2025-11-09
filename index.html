@@ -254,6 +254,17 @@ footer{
   section[aria-label="Tagesablauf"] { margin-top: 2.5rem; }
 }
 section[aria-label="Galerie"] { margin-top: 2.5rem; }
+/* iOS: Light Filters & Content-Visibility für Offscreen-Sektionen */
+@media (hover:none) and (pointer:coarse){
+  .hero__fg{ filter: drop-shadow(0 10px 20px rgba(0,0,0,.28)); }
+  .hero__bg{ filter: contrast(.95) saturate(1.02) brightness(.95); }
+}
+
+/* Große Sektionen erst rendern, wenn sie in Sicht kommen */
+section, .timeline, .gallery { content-visibility: auto; contain-intrinsic-size: 800px; }
+
+/* Verhindert Alpha-Bleeding/teure Repaints beim Overlay */
+.hero__overlay, .hero__fade { will-change: opacity; }
 
 /* Keyframes */
 @keyframes slide-up{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
