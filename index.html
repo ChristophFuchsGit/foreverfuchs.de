@@ -1,0 +1,544 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Save the Date – Denise & Chris</title>
+  <meta name="description" content="Save the Date – Hochzeit von Denise & Chris" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+:root{
+  --gold:#fffaf7;
+  --brand:#ffffff;
+  --accent1:#7d665d;
+  --accent2:#b08b73;
+  --accent3:#e6d7cf;
+  --card:#fffaf7;
+  --muted:#706463;
+}
+
+*{box-sizing:border-box}
+html,body{height:100%}
+html{scroll-behavior:smooth}
+body {
+  background-color: #c5ac98;
+  color: white;
+  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji","Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  margin:0;
+}
+
+.container{max-width:1120px;margin:0 auto;padding:0 1.25rem}
+
+/* ===== Scroll-Progress ===== */
+.progress{
+  position:fixed;left:0;top:0;height:3px;width:0;background:linear-gradient(90deg,var(--gold),var(--accent3));z-index:999;box-shadow:0 0 8px rgba(0,0,0,.25)
+}
+
+/* HERO (mit Parallax + sanfte Keyframes) */
+.hero{position:relative;min-height:100dvh;height:100svh;isolation:isolate;overflow:hidden;background:var(--accent1)}
+/* Hintergrundbild – bewegt sich langsamer */
+.hero__bg{
+  position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+  filter:contrast(.95) saturate(1.05) brightness(.9);
+  transform:translate3d(0,var(--py,0),0) scale(1.08);
+  will-change:transform;
+  z-index:0;
+  animation: kenburns 24s ease-in-out infinite alternate;
+}
+@keyframes kenburns{from{transform:translate3d(0,var(--py,0),0) scale(1.06)}to{transform:translate3d(0,var(--py,0),0) scale(1.12)}}
+/* Vordergrundbild */
+.hero__fg{
+  width: 720px;
+  position:absolute;left:50%;bottom:-2vh;transform:translate3d(-50%,var(--py,0),0);
+  width:min(88vw,1500px);height:auto;z-index:1;pointer-events:none;
+  filter:drop-shadow(0 20px 40px rgba(0,0,0,.35)) contrast(1.02) saturate(1.02);
+  will-change:transform;
+  object-fit:contain;
+}
+.hero__fg { width: 1080px; }
+
+/* Sanfter Overlay/Verlauf für bessere Lesbarkeit */
+.hero__overlay{
+  position:absolute;inset:0;z-index:1;pointer-events:none;
+  background:
+    radial-gradient(120% 70% at 50% 0%, rgba(0,0,0,.25), transparent 55%),
+    linear-gradient(to top, rgba(0,0,0,.35), rgba(0,0,0,.05) 40%, transparent);
+}
+
+.hero__content{position:relative;z-index:2;min-height:100%;display:flex;align-items:center;justify-content:center;text-align:center;color:#fff;padding:1rem}
+.kicker{letter-spacing:.35em;text-transform:uppercase;font-size:.8rem;opacity:.9;color:var(--gold);animation: fade-in .9s ease .3s both}
+.headline{font-family:"Playfair Display",serif;font-weight:400;line-height:1.05;margin:.25rem 0;font-size:clamp(2.25rem,5vw,4.5rem);color:#fff9f7;text-shadow:0 2px 4px rgba(0,0,0,.25);animation: slide-up .9s cubic-bezier(.2,.8,.2,1) .15s both}
+.subline{opacity:.95;font-size:clamp(1rem,2.3vw,1.25rem);color:var(--gold);animation: fade-in .9s ease .6s both}
+
+.countdown{margin-top:1rem;display:flex;flex-wrap:wrap;gap:.75rem;justify-content:center}
+.cd-box{min-width:74px;background:rgba(255,255,255,.15);backdrop-filter:blur(6px);border-radius:16px;padding:.75rem .85rem;color:#fff;box-shadow:0 1px 0 rgba(255,255,255,.15) inset;transform:translateY(8px);opacity:0;animation: slide-up .7s ease var(--delay,0s) forwards}
+.cd-val{font-weight:700;font-size:1.6rem;letter-spacing:.02em;font-variant-numeric:tabular-nums;color:var(--gold)}
+.cd-label{text-transform:uppercase;font-size:.68rem;opacity:.9;letter-spacing:.08em}
+
+.cta-row{margin-top:1.25rem;display:flex;gap:.75rem;justify-content:center;flex-wrap:wrap}
+.btn{appearance:none;border:0;border-radius:16px;padding:.8rem 1.1rem;font-weight:600;cursor:pointer;transition:transform .2s ease, box-shadow .3s ease, background .3s ease;position:relative;isolation:isolate}
+.btn:active{transform:translateY(1px)}
+.btn-primary{background:var(--gold);color:#fff;box-shadow:0 10px 20px rgba(0,0,0,.15)}
+.btn-primary:hover{box-shadow:0 18px 30px rgba(0,0,0,.25)}
+.btn-ghost{background:transparent;border:2px solid var(--gold);color:var(--gold)}
+.btn-ghost:hover{background:rgba(212,175,55,.1)}
+/* Ripple */
+.btn::after{content:"";position:absolute;inset:auto auto 0 50%;width:0;height:0;border-radius:999px;background:rgba(255,255,255,.2);transform:translateX(-50%);opacity:0;pointer-events:none}
+.btn:focus-visible{outline:2px dashed var(--accent3);outline-offset:3px}
+
+.scroll-cue{position:absolute;left:50%;bottom:18px;transform:translateX(-50%);color:var(--gold);opacity:.85;animation:bounce 1.6s infinite}
+@keyframes bounce{0%,100%{transform:translate(-50%,0)}50%{transform:translate(-50%,7px)}}
+
+/* SECTIONS */
+section{padding:clamp(36px,6vh,72px) 0}
+.anchor{scroll-margin-top:clamp(16px,4vh,32px)}
+h2{font-size:clamp(1.35rem,2.4vw,1.9rem);margin:0;font-weight:650;color:var(--brand)}
+
+/* Reveal on Scroll */
+.reveal{opacity:0;transform:translateY(14px);transition:opacity .7s ease, transform .7s ease}
+.reveal.show{opacity:1;transform:none}
+
+/* INFO CARDS */
+.grid{display:grid;gap:1rem}
+@media (min-width:860px){.grid.cols-3{grid-template-columns:repeat(3,1fr)}}
+.card{background:var(--card);border:1px solid var(--accent3);border-radius:22px;padding:1rem 1rem 1.1rem;box-shadow:0 1px 4px rgba(0,0,0,.06);transition:transform .2s ease, box-shadow .2s ease}
+.card:hover{transform:translateY(-3px);box-shadow:0 10px 24px rgba(0,0,0,.12)}
+.card h3{margin:.2rem 0 .5rem;font-size:1.05rem;color:var(--accent1)}
+.muted{color:var(--muted)}
+
+/* TIMELINE */
+.timeline{position:relative;border-left:3px solid var(--gold);margin-top:1.25rem;padding-left:1rem}
+.tl-item{position:relative;margin:0 0 1rem 0}
+.tl-dot{width:12px;height:12px;border-radius:50%;background:var(--gold);position:absolute;left:-7.5px;top:.35rem;box-shadow:0 0 0 0 rgba(255,250,247,.6);animation:pulse 2.2s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(255,250,247,.6)}70%{box-shadow:0 0 0 12px rgba(255,250,247,0)}100%{box-shadow:0 0 0 0 rgba(255,250,247,0)}}
+.tl-card{background:#fffaf7;border:1px solid var(--accent2);border-radius:18px;padding:.85rem .95rem;box-shadow:0 1px 2px rgba(0,0,0,.04);opacity:0;transform:translateX(8px);transition:opacity .6s ease, transform .6s ease}
+.tl-card.show{opacity:1;transform:none}
+.tl-head{display:flex;justify-content:space-between;gap:.75rem;align-items:baseline}
+.tl-time{color:var(--muted);font-variant-numeric:tabular-nums}
+
+/* GALLERY */
+.gallery-head{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:.75rem}
+.gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:1rem}
+.thumb{position:relative;margin:0;border-radius:18px;overflow:hidden;border:2px solid var(--gold);box-shadow:0 1px 2px rgba(0,0,0,.08)}
+.thumb img{width:100%;height:100%;aspect-ratio:3/2;object-fit:cover;transition:transform .35s ease, filter .35s ease;display:block;filter:saturate(.96) contrast(1.02)}
+.thumb:hover img{transform:scale(1.03) rotate(.2deg)}
+.thumb button{display:block;border:0;background:transparent;padding:0;width:100%;cursor:pointer;height:100%}
+.gallery-note{font-size:.85rem;color:var(--muted)}
+
+/* DARK CTA */
+.dark{background:var(--brand);color:white}
+.dark p{color:white}
+.dark .badge{display:inline-block;background:var(--accent2);color:#fff;border:none;padding:.35rem .65rem;border-radius:12px}
+
+/* FOOTER */
+footer{border-top:3px solid var(--gold);background:#c5ac98}
+.footer-inner{display:flex;gap:1rem;flex-wrap:wrap;align-items:center;justify-content:space-between;padding:1rem 0}
+.nav a{color:var(--brand);text-decoration:none;margin-right:1rem}
+.nav a:hover{color:var(--gold)}
+
+/* LIGHTBOX */
+.lightbox{position:fixed;inset:0;background:rgba(0,0,0,.92);display:none;align-items:center;justify-content:center;padding:1rem;z-index:40}
+.lightbox.open{display:flex}
+.lightbox img{max-width:92vw;max-height:85vh;border-radius:12px;box-shadow:0 20px 50px rgba(0,0,0,.5);border:2px solid var(--gold)}
+.lb-btn{position:absolute;top:50%;transform:translateY(-50%);border:0;background:rgba(240,170,138,.25);color:#fff;padding:.75rem 1rem;border-radius:999px;cursor:pointer}
+.lb-prev{left:1rem}
+.lb-next{right:1rem}
+.lb-close{top:1rem;right:1rem;transform:none;background:var(--gold)}
+
+/* MINI MAP */
+.map-wrap{margin-top:.6rem}
+.map-links{margin-top:.4rem;font-size:.9rem}
+.map-links a{color:var(--gold);text-decoration:none}
+.map-links a:hover{opacity:.9}
+.map-embed {
+  width: 100%;
+  aspect-ratio: 25 / 9;
+  border: 0;
+  border-radius: 14px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, .06);
+  filter: grayscale(100%);
+  transition: filter 0.3s ease;
+}
+.map-embed:hover { filter: brightness(1); }
+
+.hero__fade{
+  position:absolute;
+  left:0; right:0; bottom:-1px;
+  height:min(18vh, 220px);
+  pointer-events:none;
+  z-index:2;
+  background:
+    linear-gradient(
+      to bottom,
+      rgba(197,172,152,0) 0%,
+      rgba(197,172,152,.85) 60%,
+      #c5ac98 100%
+    );
+}
+
+/* ======= DARK SECTION – passend zum Hero ======= */
+.dark{
+  position: relative;
+  isolation: isolate;
+  background:
+    radial-gradient(160% 100% at 50% -20%, rgba(0,0,0,.25), transparent 55%),
+    linear-gradient(180deg, color-mix(in oklab, var(--accent1) 92%, black 8%) 0%,
+                           color-mix(in oklab, var(--accent2) 70%, black 20%) 100%);
+  color: #fffaf7;
+  padding: clamp(36px,6vh,72px) 0;
+}
+.dark::before{
+  content:"";
+  position:absolute; inset:0;
+  pointer-events:none; z-index:0;
+  background:
+    linear-gradient(to top, rgba(255,255,255,.06), rgba(255,255,255,0) 40%),
+    radial-gradient(120% 80% at 50% 10%, rgba(255,255,255,.04), transparent 60%);
+}
+.dark > .container{ position: relative; z-index: 1; }
+.dark h2{ color:#fffaf7; text-shadow: 0 1px 2px rgba(0,0,0,.25); }
+.dark p,.dark li{ color: color-mix(in oklab, #fffaf7 88%, black 12%); }
+.dark ul{ padding-left: 1.1rem; margin: .5rem 0 0; }
+.dark li{ margin:.3rem 0; }
+.dark li::marker{ color: var(--accent3); }
+.dark .badge{
+  display:inline-block;
+  background: color-mix(in oklab, var(--accent2) 82%, black 18%);
+  color:#fff;
+  border:1px solid color-mix(in oklab, var(--accent2) 70%, white 30%);
+  padding:.38rem .7rem;
+  border-radius:999px;
+  font-weight:600;
+  box-shadow: 0 4px 18px rgba(0,0,0,.25);
+}
+.dark a{ color: var(--accent3); text-underline-offset: 3px; text-decoration-thickness: 1px; }
+.dark a:hover{ color:#fff; }
+.dark .map-embed{
+  border-radius: 16px;
+  border: 2px solid rgba(255,250,247,.25);
+  box-shadow: 0 10px 30px rgba(0,0,0,.35);
+  filter: grayscale(100%) brightness(.9) contrast(1.05) saturate(.9);
+  transition: filter .35s ease, transform .35s ease, box-shadow .35s ease;
+}
+.dark .map-embed:hover{ filter: grayscale(0%) brightness(1); transform: translateY(-2px); box-shadow: 0 14px 36px rgba(0,0,0,.45); }
+
+@media (max-width: 859px){ .dark .grid{ gap: 1rem; } }
+
+/* ======= FOOTER – näher an die Header-Hues ======= */
+footer{
+  border-top: 3px solid var(--gold);
+  background: linear-gradient(
+     180deg,
+     color-mix(in oklab, #c5ac98 88%, black 12%) 0%,
+     color-mix(in oklab, var(--accent1) 80%, #c5ac98 20%) 100%
+  );
+  color: #fffaf7;
+}
+.footer-inner p.muted{ color: color-mix(in oklab, #fffaf7 75%, black 25%); }
+.nav a{ color:#fffaf7; font-weight:600; opacity:.9; transition: opacity .2s ease, color .2s ease; }
+.nav a:hover{ color: var(--accent3); opacity:1; }
+
+/* Feinheiten */
+.dark .btn,.dark .btn-ghost{ border-color: rgba(255,250,247,.7); color: #fffaf7; }
+.dark .btn:hover,.dark .btn-ghost:hover{ background: rgba(255,250,247,.08); }
+
+.hero__content{ z-index:3; }
+/* Fallback: Parallax & Kenburns aus bei reduzierter Bewegung */
+@media (prefers-reduced-motion: reduce){
+  .hero__bg, .hero__fg { transform:none !important; animation:none !important; }
+}
+@media (max-width: 859px) {
+  .grid.cols-3 .card:first-child { margin-top: clamp(1rem, 4vw, 2rem); }
+  section[aria-label="Tagesablauf"] { margin-top: 2.5rem; }
+}
+section[aria-label="Galerie"] { margin-top: 2.5rem; }
+
+/* Keyframes */
+@keyframes slide-up{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+@keyframes fade-in{from{opacity:0}to{opacity:1}}
+  </style>
+</head>
+<body>
+  <div class="progress" id="progress" aria-hidden="true"></div>
+  <!-- HERO -->
+  <header class="hero" role="banner" id="hero">
+   <img class="hero__bg" src="./hintergrund2.png" alt="Sommerlicher Park" />
+  <img class="hero__fg" src="./paar.png" alt="" aria-hidden="true" />
+  <div class="hero__overlay" aria-hidden="true"></div>
+  <div class="hero__fade" aria-hidden="true"></div>
+
+    <div class="hero__content">
+      <div>
+        <p class="kicker">Save the Date</p>
+        <h1 class="headline">Denise &amp; Chris</h1>
+        <p class="subline"><span id="eventDateText">Samstag, 19. September 2026</span> · Wesendorf</p>
+        <div class="countdown" aria-live="polite" aria-atomic="true">
+          <div class="cd-box" style="--delay:.05s" title="Tage"><div class="cd-val" id="dVal">00</div><div class="cd-label">Tage</div></div>
+          <div class="cd-box" style="--delay:.15s" title="Stunden"><div class="cd-val" id="hVal">00</div><div class="cd-label">Stunden</div></div>
+          <div class="cd-box" style="--delay:.25s" title="Minuten"><div class="cd-val" id="mVal">00</div><div class="cd-label">Min.</div></div>
+          <div class="cd-box" style="--delay:.35s" title="Sekunden"><div class="cd-val" id="sVal">00</div><div class="cd-label">Sek.</div></div>
+        </div>
+        <div class="cta-row">
+          <a class="btn btn-ghost" href="#details">Details</a>
+        </div>
+      </div>
+      <div class="scroll-cue">Scroll ↓</div>
+    </div>
+  </header>
+
+  <!-- DETAILS -->
+  <section class="container anchor" id="details" aria-label="Details">
+    <div class="grid cols-3">
+      <article class="card reveal">
+        <h3>Wann?</h3>
+        <p>
+          <strong>Samstag, 20. Juni 2026</strong><br />
+          Einlass ab <strong>13:30 Uhr</strong>, Trauung <strong>14:00 Uhr</strong>
+        </p>
+      </article>
+      <article class="card reveal" style="transition-delay:.08s">
+        <h3>Wo?</h3>
+        <p>
+          Eventlocation Wesendorf Gifhorn<br/>
+          Zum Hammersteinpark 12, 29392 Wesendorf
+        </p>
+      </article>
+      <article class="card reveal" style="transition-delay:.16s">
+        <h3>Dresscode</h3>
+        <p>Festlich sommerlich – gerne farbenfroh. Bitte keine Weiß-Töne. 😊</p>
+      </article>
+    </div>
+  </section>
+
+  <!-- TIMELINE -->
+  <section class="container" aria-label="Tagesablauf">
+    <h2 class="reveal">Tagesablauf</h2>
+    <ol class="timeline" style="color: #706463; list-style:none; padding-left:1rem">
+      <li class="tl-item">
+        <div class="tl-dot" aria-hidden="true"></div>
+        <div class="tl-card" id="tl1">
+          <div class="tl-head"><h3>Details folgen bald</h3><time class="tl-time">00:00</time></div>
+          <p class="muted">...</p>
+        </div>
+      </li>
+    </ol>
+  </section>
+
+  <!-- GALLERY -->
+  <section class="container anchor" id="galerie" aria-label="Galerie">
+    <div class="gallery-head">
+      <h2 class="reveal">Galerie</h2>
+    </div>
+    <div class="gallery" id="gallery">
+      <figure class="thumb reveal"><button data-index="0"><img loading="lazy" src="./1.png" alt="Bild 1" width="1600" height="1067"/></button></figure>
+      <figure class="thumb reveal"><button data-index="1"><img loading="lazy" src="./2.png" alt="Bild 2" width="1600" height="1067"/></button></figure>
+      <figure class="thumb reveal"><button data-index="2"><img loading="lazy" src="./3.png" alt="Bild 3" width="1600" height="1067"/></button></figure>
+      <figure class="thumb reveal"><button data-index="3"><img loading="lazy" src="./4.png" alt="Bild 4" width="1600" height="1067"/></button></figure>
+    </div>
+  </section>
+
+  <!-- INFO & RSVP -->
+  <section class="dark">
+    <div class="container">
+      <div class="grid" style="grid-template-columns:1fr;gap:1.25rem">
+        <div class="reveal">
+          <h2>Reise &amp; Übernachtung</h2>
+          <p class="badge" aria-hidden="true">Service-Infos</p>
+          <ul class="muted">
+            <li>Parkplätze vor Ort vorhanden.</li>
+            <li>Hotel-Empfehlungen folgen mit der Einladung.</li>
+            <li>Shuttle zwischen Location und Hotel ab 23:00 Uhr.</li>
+          </ul>
+        </div>
+        <div class="reveal" style="transition-delay:.08s">
+          <h2>Geschenkidee</h2>
+          <p>Wir freuen uns am meisten über eure Anwesenheit. Wer dennoch etwas schenken möchte: Ein Beitrag zur Reisekasse macht uns glücklich. 💛</p>
+          <p><a class="badge" href="mailto:hello@example.com?subject=R%C3%BCckfrage%20Geschenke%20Denise%20%26%20Chris">Fragen? Schreibt uns!</a></p>
+        </div>
+      </div>
+    </div>
+    <div class="map-wrap reveal" aria-label="Karte der Eventlocation">
+      <iframe
+        class="map-embed"
+        loading="lazy"
+        referrerpolicy="no-referrer-when-downgrade"
+        src="https://www.google.com/maps?q=52.5838375,10.5228697&hl=de&z=15&output=embed"
+        allowfullscreen>
+      </iframe>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container footer-inner">
+      <p class="muted">© <span id="year"></span> Denise &amp; Chris</p>
+      <nav class="nav">
+        <a href="#details">Details</a>
+        <a href="#galerie">Galerie</a>
+        <a href="mailto:hello@example.com?subject=Kontakt%20Denise%20%26%20Chris">Kontakt</a>
+      </nav>
+    </div>
+  </footer>
+
+  <!-- LIGHTBOX -->
+  <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Bild in Vollansicht">
+    <button class="lb-btn lb-prev" id="lbPrev" aria-label="Vorheriges Bild">‹</button>
+    <img id="lbImg" alt="Vollbild" />
+    <button class="lb-btn lb-next" id="lbNext" aria-label="Nächstes Bild">›</button>
+    <button class="lb-btn lb-close" id="lbClose" aria-label="Schließen">×</button>
+  </div>
+
+  <script>
+  // =====================
+  // Konfiguration
+  // =====================
+  const EVENT_DATE = new Date('2026-09-19T14:00:00'); // <- Anpassen
+  const EVENT_CITY = 'Gifhorn';
+
+  // =====================
+  // Helfer
+  // =====================
+  const $ = (s,scope=document)=>scope.querySelector(s);
+  const $$ = (s,scope=document)=>Array.from(scope.querySelectorAll(s));
+  function pad(n){return String(n).padStart(2,'0')}
+  function updateCountdown(){
+    const now = new Date();
+    const diff = Math.max(0, EVENT_DATE - now);
+    const d = Math.floor(diff / (1000*60*60*24));
+    const h = Math.floor(diff / (1000*60*60)) % 24;
+    const m = Math.floor(diff / (1000*60)) % 60;
+    const s = Math.floor(diff / 1000) % 60;
+    $('#dVal').textContent = pad(d);
+    $('#hVal').textContent = pad(h);
+    $('#mVal').textContent = pad(m);
+    $('#sVal').textContent = pad(s);
+  }
+  function formatDateLong(d){
+    return d.toLocaleDateString('de-DE',{weekday:'long', day:'2-digit', month:'long', year:'numeric'});
+  }
+
+  // =====================
+  // Init statisch
+  // =====================
+  $('#year').textContent = new Date().getFullYear();
+  $('#eventDateText').textContent = `${formatDateLong(EVENT_DATE)} · ${EVENT_CITY}`;
+  updateCountdown();
+  setInterval(updateCountdown, 1000);
+
+  // =====================
+  // Reveal on Scroll (Sections, Cards, Timeline, Gallery)
+  // =====================
+  const ioReveal = new IntersectionObserver((entries)=>{
+    for (const e of entries){
+      if(e.isIntersecting){ e.target.classList.add('show'); ioReveal.unobserve(e.target); }
+    }
+  }, { threshold: 0.18 });
+  $$('.reveal, .tl-card').forEach(el=> ioReveal.observe(el));
+
+  // =====================
+  // Scroll-Progress
+  // =====================
+  const progress = $('#progress');
+  function setProgress(){
+    const h = document.documentElement;
+    const scrolled = (h.scrollTop)/(h.scrollHeight - h.clientHeight);
+    progress.style.width = (scrolled*100).toFixed(2) + '%';
+  }
+  document.addEventListener('scroll', setProgress, {passive:true});
+  setProgress();
+
+  // =====================
+  // Button Ripple (simple)
+  // =====================
+  $$('.btn').forEach(btn=>{
+    btn.addEventListener('pointerdown', (e)=>{
+      const rect = btn.getBoundingClientRect();
+      const r = Math.max(rect.width, rect.height);
+      const after = getComputedStyle(btn, '::after');
+      btn.style.setProperty('--r-x', (e.clientX - rect.left) + 'px');
+      btn.style.setProperty('--r', r + 'px');
+      btn.animate([
+        { clipPath: `circle(0 at ${e.clientX-rect.left}px ${e.clientY-rect.top}px)`, opacity: .35 },
+        { clipPath: `circle(${r}px at ${e.clientX-rect.left}px ${e.clientY-rect.top}px)`, opacity: 0 }
+      ], { duration: 550, easing: 'cubic-bezier(.2,.8,.2,1)' });
+    });
+  });
+
+  // =====================
+  // Lightbox + Swipe
+  // =====================
+  const gallery = $$('#gallery button');
+  const lb = $('#lightbox');
+  const lbImg = $('#lbImg');
+  const lbPrev = $('#lbPrev');
+  const lbNext = $('#lbNext');
+  const lbClose = $('#lbClose');
+  let active = null;
+
+  function openLightbox(index){
+    active = index;
+    lbImg.src = gallery[active].querySelector('img').src;
+    lb.classList.add('open');
+    lbImg.focus?.();
+  }
+  function closeLightbox(){ lb.classList.remove('open'); active = null; }
+  function prev(){ if(active===null) return; active = (active - 1 + gallery.length) % gallery.length; lbImg.src = gallery[active].querySelector('img').src; }
+  function next(){ if(active===null) return; active = (active + 1) % gallery.length; lbImg.src = gallery[active].querySelector('img').src; }
+
+  gallery.forEach((btn, i)=>{ btn.addEventListener('click', ()=> openLightbox(i)); });
+  lbPrev.addEventListener('click', (e)=>{ e.stopPropagation(); prev(); });
+  lbNext.addEventListener('click', (e)=>{ e.stopPropagation(); next(); });
+  lbClose.addEventListener('click', (e)=>{ e.stopPropagation(); closeLightbox(); });
+  lb.addEventListener('click', closeLightbox);
+  document.addEventListener('keydown', (e)=>{
+    if(!lb.classList.contains('open')) return;
+    if(e.key==='Escape') closeLightbox();
+    if(e.key==='ArrowLeft') prev();
+    if(e.key==='ArrowRight') next();
+  });
+  // Touch swipe
+  let sx = 0; let dx = 0; const SWIPE = 48;
+  lb.addEventListener('touchstart', e=>{ sx = e.touches[0].clientX; dx = 0; }, {passive:true});
+  lb.addEventListener('touchmove', e=>{ dx = e.touches[0].clientX - sx; }, {passive:true});
+  lb.addEventListener('touchend', ()=>{ if(Math.abs(dx)>SWIPE){ dx<0?next():prev(); } });
+
+  // =====================
+  // Parallax (Hero)
+  // =====================
+  (function(){
+    const hero = $('#hero');
+    const bg   = hero.querySelector('.hero__bg');
+    const fg   = hero.querySelector('.hero__fg');
+
+    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    let ticking = false;
+    function setParallax(){
+      const y = window.scrollY - hero.offsetTop;
+      const clampedY = Math.max(-window.innerHeight, Math.min(y, hero.offsetHeight));
+      const bgOffset = clampedY * 0.18;  // Hintergrund langsamer
+      const fgOffset = clampedY * 0.35;  // Vordergrund schneller
+      bg.style.setProperty('--py', `${bgOffset}px`);
+      fg.style.setProperty('--py', `${fgOffset}px`);
+      ticking = false;
+    }
+    function onScrollOrResize(){ if (!ticking){ window.requestAnimationFrame(setParallax); ticking = true; } }
+    const io = new IntersectionObserver(entries=>{
+      entries.forEach(entry=>{
+        if(entry.isIntersecting){
+          window.addEventListener('scroll', onScrollOrResize, {passive:true});
+          window.addEventListener('resize', onScrollOrResize);
+          setParallax();
+        } else {
+          window.removeEventListener('scroll', onScrollOrResize);
+          window.removeEventListener('resize', onScrollOrResize);
+        }
+      });
+    }, { root: null, threshold: 0 });
+    io.observe(hero);
+  })();
+  </script>
+</body>
+</html>
