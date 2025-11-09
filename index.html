@@ -10,7 +10,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;600&display=swap" rel="stylesheet">
   <style>
 :root{
-  --gold:#fffaf7;
+  --gold:#ffffff;
   --brand:#ffffff;
   --accent1:#7d665d;
   --accent2:#b08b73;
@@ -158,10 +158,10 @@ footer{border-top:3px solid var(--gold);background:#c5ac98}
   border: 0;
   border-radius: 14px;
   box-shadow: 0 1px 2px rgba(0, 0, 0, .06);
-  filter: grayscale(100%);
+  filter: sepia(100%);
   transition: filter 0.3s ease;
 }
-.map-embed:hover { filter: brightness(1); }
+.map-embed:hover { }
 
 .hero__fade{
   position:absolute;
@@ -169,13 +169,7 @@ footer{border-top:3px solid var(--gold);background:#c5ac98}
   height:min(18vh, 220px);
   pointer-events:none;
   z-index:2;
-  background:
-    linear-gradient(
-      to bottom,
-      rgba(197,172,152,0) 0%,
-      rgba(197,172,152,.85) 60%,
-      #c5ac98 100%
-    );
+  
 }
 
 /* ======= DARK SECTION – passend zum Hero ======= */
@@ -186,7 +180,7 @@ footer{border-top:3px solid var(--gold);background:#c5ac98}
     radial-gradient(160% 100% at 50% -20%, rgba(0,0,0,.25), transparent 55%),
     linear-gradient(180deg, color-mix(in oklab, var(--accent1) 92%, black 8%) 0%,
                            color-mix(in oklab, var(--accent2) 70%, black 20%) 100%);
-  color: #fffaf7;
+  color: #ffffff;
   padding: clamp(36px,6vh,72px) 0;
 }
 .dark::before{
@@ -199,7 +193,7 @@ footer{border-top:3px solid var(--gold);background:#c5ac98}
 }
 .dark > .container{ position: relative; z-index: 1; }
 .dark h2{ color:#fffaf7; text-shadow: 0 1px 2px rgba(0,0,0,.25); }
-.dark p,.dark li{ color: color-mix(in oklab, #fffaf7 88%, black 12%); }
+.dark p,.dark li{ color: color-mix(in oklab, #ffffff); }
 .dark ul{ padding-left: 1.1rem; margin: .5rem 0 0; }
 .dark li{ margin:.3rem 0; }
 .dark li::marker{ color: var(--accent3); }
@@ -219,10 +213,9 @@ footer{border-top:3px solid var(--gold);background:#c5ac98}
   border-radius: 16px;
   border: 2px solid rgba(255,250,247,.25);
   box-shadow: 0 10px 30px rgba(0,0,0,.35);
-  filter: grayscale(100%) brightness(.9) contrast(1.05) saturate(.9);
+  filter: grayscale(100%);
   transition: filter .35s ease, transform .35s ease, box-shadow .35s ease;
 }
-.dark .map-embed:hover{ filter: grayscale(0%) brightness(1); transform: translateY(-2px); box-shadow: 0 14px 36px rgba(0,0,0,.45); }
 
 @media (max-width: 859px){ .dark .grid{ gap: 1rem; } }
 
@@ -270,6 +263,8 @@ section, .timeline, .gallery { content-visibility: auto; contain-intrinsic-size:
 
 /* Falls du das Rubber-Band ganz unterbinden willst (nur moderne iOS-Safari): */
 html, body { overscroll-behavior-y: none; } /* optional – verändert das Scrollgefühl global */
+
+
 .dresscode-colors {
   display: flex;
   justify-content: center;
@@ -294,6 +289,64 @@ html, body { overscroll-behavior-y: none; } /* optional – verändert das Scrol
 .whatsapp-links .badge {
   text-decoration: none;
 }
+
+/* ===== Transparenz/Glass für unteren Bereich & Footer ===== */
+@supports (backdrop-filter: blur(1px)) {
+  /* Unterer (dunkler) Abschnitt */
+  .dark{
+    background: transparent;            /* macht die Fläche durchlässig */
+    position: relative;
+    isolation: isolate;
+  }
+  .dark::before{
+    /* deine vorhandenen Highlights bleiben, wir machen sie glasig */
+    opacity: .68;                        /* Transparenz */
+    backdrop-filter: blur(12px) saturate(1.05);
+    -webkit-backdrop-filter: blur(12px) saturate(1.05);
+    border-top: 1px solid rgba(255,250,247,.18);
+    border-bottom: 1px solid rgba(0,0,0,.12);
+    z-index: 0;                          /* unter Content */
+  }
+  .dark > .container,
+  .dark .map-wrap{                       /* Content bleibt scharf über dem Blur */
+    position: relative; z-index: 1;
+  }
+
+  /* Footer – halbtransparent + Blur */
+  footer{
+    background: linear-gradient(
+      180deg,
+      rgba(197,172,152,.55) 0%,
+      rgba(125,102,93,.55) 100%
+    );
+    backdrop-filter: blur(10px) saturate(1.05);
+    -webkit-backdrop-filter: blur(10px) saturate(1.05);
+    border-top: 1px solid rgba(255,250,247,.6);
+    box-shadow: 0 -10px 30px rgba(0,0,0,.18) inset;
+  }
+  .footer-inner p.muted{ color: color-mix(in oklab, #fffaf7 80%, black 20%); }
+  .nav a{ opacity:.95; }
+}
+
+/* Fallback ohne Backdrop-Filter: leichte Transparenz ohne Blur */
+@supports not (backdrop-filter: blur(1px)) {
+  .dark{
+    background: linear-gradient(
+      180deg,
+      rgba(125,102,93,.92) 0%,
+      rgba(176,139,115,.92) 100%
+    );
+  }
+  footer{
+    background: linear-gradient(
+      180deg,
+      rgba(197,172,152,.92) 0%,
+      rgba(125,102,93,.92) 100%
+    );
+  }
+}
+
+
 /* Keyframes */
 @keyframes slide-up{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
 @keyframes fade-in{from{opacity:0}to{opacity:1}}
@@ -407,7 +460,7 @@ html, body { overscroll-behavior-y: none; } /* optional – verändert das Scrol
           <div class="whatsapp-links">
             <a 
               class="badge" 
-              href="https://wa.me/491755883342?text=Hallo%20Michelle,%20ich%20habe%20eine%20Frage%20zu%20den%20Geschenken%20🙂" 
+              href="https://wa.me/4917621499472?text=Hallo%20Michelle,%20ich%20habe%20eine%20Frage%20zu%20den%20Geschenken%20🙂" 
               target="_blank"
               rel="noopener noreferrer"
             >
@@ -415,7 +468,7 @@ html, body { overscroll-behavior-y: none; } /* optional – verändert das Scrol
             </a>
             <a 
               class="badge" 
-              href="https://wa.me/491701234567?text=Hallo%20Denise%20und%20Chris,%20ich%20habe%20eine%20Frage%20zu%20den%20Geschenken%20🙂" 
+              href="https://wa.me/491755883342?text=Hallo%20Denise%20und%20Chris,%20ich%20habe%20eine%20Frage%20zu%20den%20Geschenken%20🙂" 
               target="_blank"
               rel="noopener noreferrer"
             >
