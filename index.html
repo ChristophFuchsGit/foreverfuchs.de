@@ -24,7 +24,7 @@ html,body{height:100%}
 html{scroll-behavior:smooth}
 body {
   background-color: #c5ac98;
-  color: white;
+  color: #7d665d;
   font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji","Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
   margin:0;
 }
@@ -270,7 +270,30 @@ section, .timeline, .gallery { content-visibility: auto; contain-intrinsic-size:
 
 /* Falls du das Rubber-Band ganz unterbinden willst (nur moderne iOS-Safari): */
 html, body { overscroll-behavior-y: none; } /* optional – verändert das Scrollgefühl global */
+.dresscode-colors {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 8px;
+}
 
+.color-box {
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
+  border: 1px solid rgba(0,0,0,0.1);
+  box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+.whatsapp-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px; /* Abstand zwischen den Buttons */
+  margin-top: 10px;
+}
+
+.whatsapp-links .badge {
+  text-decoration: none;
+}
 /* Keyframes */
 @keyframes slide-up{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
 @keyframes fade-in{from{opacity:0}to{opacity:1}}
@@ -307,27 +330,35 @@ html, body { overscroll-behavior-y: none; } /* optional – verändert das Scrol
   <!-- DETAILS -->
   <section class="container anchor" id="details" aria-label="Details">
     <div class="grid cols-3">
-      <article class="card reveal">
+      <article class="card reveal" style="text-align: center;">
         <h3>Wann?</h3>
         <p>
-          <strong>Samstag, 20. Juni 2026</strong><br />
-          Einlass ab <strong>13:30 Uhr</strong>, Trauung <strong>14:00 Uhr</strong>
+          <strong>Samstag, 19. September 2026</strong><br />
+          Einlass ab <strong>... Uhr</strong>, Trauung <strong>... Uhr</strong>
         </p>
       </article>
-      <article class="card reveal" style="transition-delay:.08s">
+
+      <article class="card reveal" style="transition-delay:.08s; text-align: center;">
         <h3>Wo?</h3>
         <p>
           Eventlocation Wesendorf Gifhorn<br/>
           Zum Hammersteinpark 12, 29392 Wesendorf
         </p>
       </article>
-      <article class="card reveal" style="transition-delay:.16s">
-        <h3>Dresscode</h3>
-        <p>Festlich sommerlich – gerne farbenfroh. Bitte keine Weiß-Töne. 😊</p>
-      </article>
-    </div>
-  </section>
 
+      <article class="card reveal" style="transition-delay:.16s; text-align: center;">
+        <h3>Dresscode</h3>
+        <p>Festlich sommerlich, gerne könnt ihr euch an folgenden Farben orientieren:</p>
+        <div class="dresscode-colors">
+          <span class="color-box" style="background-color: #f0aa8a;" title=""></span>
+          <span class="color-box" style="background-color: #d1947b;" title=""></span>
+          <span class="color-box" style="background-color: #ea8760;" title=""></span>
+          <span class="color-box" style="background-color: #bf6f53;" title=""></span>
+          <span class="color-box" style="background-color: #b05840;" title=""></span>
+        </div>
+      </article>
+  </div>
+</section>
   <!-- TIMELINE -->
   <section class="container" aria-label="Tagesablauf">
     <h2 class="reveal">Tagesablauf</h2>
@@ -360,18 +391,36 @@ html, body { overscroll-behavior-y: none; } /* optional – verändert das Scrol
     <div class="container">
       <div class="grid" style="grid-template-columns:1fr;gap:1.25rem">
         <div class="reveal">
-          <h2>Reise &amp; Übernachtung</h2>
-          <p class="badge" aria-hidden="true">Service-Infos</p>
+          <h2></h2>
+          <p class="badge" aria-hidden="true">Infos folgen</p>
           <ul class="muted">
-            <li>Parkplätze vor Ort vorhanden.</li>
-            <li>Hotel-Empfehlungen folgen mit der Einladung.</li>
-            <li>Shuttle zwischen Location und Hotel ab 23:00 Uhr.</li>
+            <li>...</li>
+            <li>...</li>
+            <li>...</li>
           </ul>
         </div>
-        <div class="reveal" style="transition-delay:.08s">
+         <div class="reveal" style="transition-delay:.08s">
           <h2>Geschenkidee</h2>
-          <p>Wir freuen uns am meisten über eure Anwesenheit. Wer dennoch etwas schenken möchte: Ein Beitrag zur Reisekasse macht uns glücklich. 💛</p>
-          <p><a class="badge" href="mailto:hello@example.com?subject=R%C3%BCckfrage%20Geschenke%20Denise%20%26%20Chris">Fragen? Schreibt uns!</a></p>
+          <p>Wir freuen uns riesig, dass ihr diesen besonderen Tag mit uns verbringt!</p>
+          <p>Wer uns eine Freude machen möchte, darf gerne zu unseren Flitterwochen beisteuern. 💛</p>
+          <h2>Fragen?</h2>
+          <div class="whatsapp-links">
+            <a 
+              class="badge" 
+              href="https://wa.me/491755883342?text=Hallo%20Michelle,%20ich%20habe%20eine%20Frage%20zu%20den%20Geschenken%20🙂" 
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Schreibt unserer Trauzeugin Michelle
+            </a>
+            <a 
+              class="badge" 
+              href="https://wa.me/491701234567?text=Hallo%20Denise%20und%20Chris,%20ich%20habe%20eine%20Frage%20zu%20den%20Geschenken%20🙂" 
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Schreibt uns
+            </a>
         </div>
       </div>
     </div>
