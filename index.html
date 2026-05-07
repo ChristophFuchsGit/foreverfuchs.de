@@ -8,6 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;600&display=swap" rel="stylesheet">
+
   <style>
 :root{
   --gold:#ffffff;
@@ -33,139 +34,75 @@ body {
 
 /* ===== Scroll-Progress ===== */
 .progress{
-  position:fixed;left:0;top:0;height:3px;width:0;background:linear-gradient(90deg,var(--gold),var(--accent3));z-index:999;box-shadow:0 0 8px rgba(0,0,0,.25)
+  position:fixed;
+  left:0;
+  top:0;
+  height:3px;
+  width:0;
+  background:linear-gradient(90deg,var(--gold),var(--accent3));
+  z-index:999;
+  box-shadow:0 0 8px rgba(0,0,0,.25)
 }
 
-/* HERO (mit Parallax + sanfte Keyframes) */
-.hero{position:relative;min-height:100dvh;height:100svh;isolation:isolate;overflow:hidden;background:var(--accent1)}
-/* Hintergrundbild – bewegt sich langsamer */
+/* HERO */
+.hero{
+  position:relative;
+  min-height:100dvh;
+  height:100svh;
+  isolation:isolate;
+  overflow:hidden;
+  background:var(--accent1)
+}
+
 .hero__bg{
-  position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  object-fit:cover;
   filter:contrast(.95) saturate(1.05) brightness(.9);
   transform:translate3d(0,var(--py,0),0) scale(1.08);
   will-change:transform;
   z-index:0;
   animation: kenburns 24s ease-in-out infinite alternate;
 }
-@keyframes kenburns{from{transform:translate3d(0,var(--py,0),0) scale(1.06)}to{transform:translate3d(0,var(--py,0),0) scale(1.12)}}
-/* Vordergrundbild */
+
+@keyframes kenburns{
+  from{transform:translate3d(0,var(--py,0),0) scale(1.06)}
+  to{transform:translate3d(0,var(--py,0),0) scale(1.12)}
+}
+
 .hero__fg{
-  width: 720px;
-  position:absolute;left:50%;bottom:-2vh;transform:translate3d(-50%,var(--py,0),0);
-  width:min(88vw,1500px);height:auto;z-index:1;pointer-events:none;
+  position:absolute;
+  left:50%;
+  bottom:-2vh;
+  transform:translate3d(-50%,var(--py,0),0);
+  width:min(88vw,1500px);
+  height:auto;
+  z-index:1;
+  pointer-events:none;
   filter:drop-shadow(0 20px 40px rgba(0,0,0,.35)) contrast(1.02) saturate(1.02);
   will-change:transform;
   object-fit:contain;
 }
+
 .hero__fg { width: 1080px; }
 
-/* Sanfter Overlay/Verlauf für bessere Lesbarkeit */
 .hero__overlay{
-  position:absolute;inset:0;z-index:1;pointer-events:none;
+  position:absolute;
+  inset:0;
+  z-index:1;
+  pointer-events:none;
   background:
     radial-gradient(120% 70% at 50% 0%, rgba(0,0,0,.25), transparent 55%),
     linear-gradient(to top, rgba(0,0,0,.35), rgba(0,0,0,.05) 40%, transparent);
 }
 
-.hero__content{position:relative;z-index:2;min-height:100%;display:flex;align-items:center;justify-content:center;text-align:center;color:#fff;padding:1rem}
-.kicker{letter-spacing:.35em;text-transform:uppercase;font-size:.8rem;opacity:.9;color:var(--gold);animation: fade-in .9s ease .3s both}
-.headline{font-family:"Playfair Display",serif;font-weight:400;line-height:1.05;margin:.25rem 0;font-size:clamp(2.25rem,5vw,4.5rem);color:#fff9f7;text-shadow:0 2px 4px rgba(0,0,0,.25);animation: slide-up .9s cubic-bezier(.2,.8,.2,1) .15s both}
-.subline{opacity:.95;font-size:clamp(1rem,2.3vw,1.25rem);color:var(--gold);animation: fade-in .9s ease .6s both}
-
-.countdown{margin-top:1rem;display:flex;flex-wrap:wrap;gap:.75rem;justify-content:center}
-.cd-box{min-width:74px;background:rgba(255,255,255,.15);backdrop-filter:blur(6px);border-radius:16px;padding:.75rem .85rem;color:#fff;box-shadow:0 1px 0 rgba(255,255,255,.15) inset;transform:translateY(8px);opacity:0;animation: slide-up .7s ease var(--delay,0s) forwards}
-.cd-val{font-weight:700;font-size:1.6rem;letter-spacing:.02em;font-variant-numeric:tabular-nums;color:var(--gold)}
-.cd-label{text-transform:uppercase;font-size:.68rem;opacity:.9;letter-spacing:.08em}
-
-.cta-row{margin-top:1.25rem;display:flex;gap:.75rem;justify-content:center;flex-wrap:wrap}
-.btn{appearance:none;border:0;border-radius:16px;padding:.8rem 1.1rem;font-weight:600;cursor:pointer;transition:transform .2s ease, box-shadow .3s ease, background .3s ease;position:relative;isolation:isolate}
-.btn:active{transform:translateY(1px)}
-.btn-primary{background:var(--gold);color:#fff;box-shadow:0 10px 20px rgba(0,0,0,.15)}
-.btn-primary:hover{box-shadow:0 18px 30px rgba(0,0,0,.25)}
-.btn-ghost{background:transparent;border:2px solid var(--gold);color:var(--gold)}
-.btn-ghost:hover{background:rgba(212,175,55,.1)}
-/* Ripple */
-.btn::after{content:"";position:absolute;inset:auto auto 0 50%;width:0;height:0;border-radius:999px;background:rgba(255,255,255,.2);transform:translateX(-50%);opacity:0;pointer-events:none}
-.btn:focus-visible{outline:2px dashed var(--accent3);outline-offset:3px}
-
-.scroll-cue{position:absolute;left:50%;bottom:18px;transform:translateX(-50%);color:var(--gold);opacity:.85;animation:bounce 1.6s infinite}
-@keyframes bounce{0%,100%{transform:translate(-50%,0)}50%{transform:translate(-50%,7px)}}
-
-/* SECTIONS */
-section{padding:clamp(36px,6vh,72px) 0}
-.anchor{scroll-margin-top:clamp(16px,4vh,32px)}
-h2{font-size:clamp(1.35rem,2.4vw,1.9rem);margin:0;font-weight:650;color:var(--brand)}
-
-/* Reveal on Scroll */
-.reveal{opacity:0;transform:translateY(14px);transition:opacity .7s ease, transform .7s ease}
-.reveal.show{opacity:1;transform:none}
-
-/* INFO CARDS */
-.grid{display:grid;gap:1rem}
-@media (min-width:860px){.grid.cols-3{grid-template-columns:repeat(3,1fr)}}
-.card{background:var(--card);border:1px solid var(--accent3);border-radius:22px;padding:1rem 1rem 1.1rem;box-shadow:0 1px 4px rgba(0,0,0,.06);transition:transform .2s ease, box-shadow .2s ease}
-.card:hover{transform:translateY(-3px);box-shadow:0 10px 24px rgba(0,0,0,.12)}
-.card h3{margin:.2rem 0 .5rem;font-size:1.05rem;color:var(--accent1)}
-.muted{color:var(--muted)}
-
-/* TIMELINE */
-.timeline{position:relative;border-left:3px solid var(--gold);margin-top:1.25rem;padding-left:1rem}
-.tl-item{position:relative;margin:0 0 1rem 0}
-.tl-dot{width:12px;height:12px;border-radius:50%;background:var(--gold);position:absolute;left:-7.5px;top:.35rem;box-shadow:0 0 0 0 rgba(255,250,247,.6);animation:pulse 2.2s infinite}
-@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(255,250,247,.6)}70%{box-shadow:0 0 0 12px rgba(255,250,247,0)}100%{box-shadow:0 0 0 0 rgba(255,250,247,0)}}
-.tl-card{background:#fffaf7;border:1px solid var(--accent2);border-radius:18px;padding:.85rem .95rem;box-shadow:0 1px 2px rgba(0,0,0,.04);opacity:0;transform:translateX(8px);transition:opacity .6s ease, transform .6s ease}
-.tl-card.show{opacity:1;transform:none}
-.tl-head{display:flex;justify-content:space-between;gap:.75rem;align-items:baseline}
-.tl-time{color:var(--muted);font-variant-numeric:tabular-nums}
-
-/* GALLERY */
-.gallery-head{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:.75rem}
-.gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:1rem}
-.thumb{position:relative;margin:0;border-radius:18px;overflow:hidden;border:2px solid var(--gold);box-shadow:0 1px 2px rgba(0,0,0,.08)}
-.thumb img{width:100%;height:100%;aspect-ratio:3/2;object-fit:cover;transition:transform .35s ease, filter .35s ease;display:block;filter:saturate(.96) contrast(1.02)}
-.thumb:hover img{transform:scale(1.03) rotate(.2deg)}
-.thumb button{display:block;border:0;background:transparent;padding:0;width:100%;cursor:pointer;height:100%}
-.gallery-note{font-size:.85rem;color:var(--muted)}
-
-/* DARK CTA */
-.dark{background:var(--brand);color:white}
-.dark p{color:white}
-.dark .badge{display:inline-block;background:var(--accent2);color:#fff;border:none;padding:.35rem .65rem;border-radius:12px}
-
-/* FOOTER */
-footer{border-top:3px solid var(--gold);background:#c5ac98}
-.footer-inner{display:flex;gap:1rem;flex-wrap:wrap;align-items:center;justify-content:space-between;padding:1rem 0}
-.nav a{color:var(--brand);text-decoration:none;margin-right:1rem}
-.nav a:hover{color:var(--gold)}
-
-/* LIGHTBOX */
-.lightbox{position:fixed;inset:0;background:rgba(0,0,0,.92);display:none;align-items:center;justify-content:center;padding:1rem;z-index:40}
-.lightbox.open{display:flex}
-.lightbox img{max-width:92vw;max-height:85vh;border-radius:12px;box-shadow:0 20px 50px rgba(0,0,0,.5);border:2px solid var(--gold)}
-.lb-btn{position:absolute;top:50%;transform:translateY(-50%);border:0;background:rgba(240,170,138,.25);color:#fff;padding:.75rem 1rem;border-radius:999px;cursor:pointer}
-.lb-prev{left:1rem}
-.lb-next{right:1rem}
-.lb-close{top:1rem;right:1rem;transform:none;background:var(--gold)}
-
-/* MINI MAP */
-.map-wrap{margin-top:.6rem}
-.map-links{margin-top:.4rem;font-size:.9rem}
-.map-links a{color:var(--gold);text-decoration:none}
-.map-links a:hover{opacity:.9}
-.map-embed {
-  width: 100%;
-  aspect-ratio: 25 / 9;
-  border: 0;
-  border-radius: 14px;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, .06);
-  filter: grayscale(100%);
-  transition: filter 0.3s ease;
-}
-.map-embed:hover { filter: brightness(1); }
-
 .hero__fade{
   position:absolute;
-  left:0; right:0; bottom:-1px;
+  left:0;
+  right:0;
+  bottom:-1px;
   height:min(18vh, 220px);
   pointer-events:none;
   z-index:2;
@@ -178,7 +115,320 @@ footer{border-top:3px solid var(--gold);background:#c5ac98}
     );
 }
 
-/* ======= DARK SECTION – passend zum Hero ======= */
+.hero__content{
+  position:relative;
+  z-index:3;
+  min-height:100%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  color:#fff;
+  padding:1rem
+}
+
+.kicker{
+  letter-spacing:.35em;
+  text-transform:uppercase;
+  font-size:.8rem;
+  opacity:.9;
+  color:var(--gold);
+  animation: fade-in .9s ease .3s both
+}
+
+.headline{
+  font-family:"Playfair Display",serif;
+  font-weight:400;
+  line-height:1.05;
+  margin:.25rem 0;
+  font-size:clamp(2.25rem,5vw,4.5rem);
+  color:#fff9f7;
+  text-shadow:0 2px 4px rgba(0,0,0,.25);
+  animation: slide-up .9s cubic-bezier(.2,.8,.2,1) .15s both
+}
+
+.subline{
+  opacity:.95;
+  font-size:clamp(1rem,2.3vw,1.25rem);
+  color:var(--gold);
+  animation: fade-in .9s ease .6s both
+}
+
+.countdown{
+  margin-top:1rem;
+  display:flex;
+  flex-wrap:wrap;
+  gap:.75rem;
+  justify-content:center
+}
+
+.cd-box{
+  min-width:74px;
+  background:rgba(255,255,255,.15);
+  backdrop-filter:blur(6px);
+  border-radius:16px;
+  padding:.75rem .85rem;
+  color:#fff;
+  box-shadow:0 1px 0 rgba(255,255,255,.15) inset;
+  transform:translateY(8px);
+  opacity:0;
+  animation: slide-up .7s ease var(--delay,0s) forwards
+}
+
+.cd-val{
+  font-weight:700;
+  font-size:1.6rem;
+  letter-spacing:.02em;
+  font-variant-numeric:tabular-nums;
+  color:var(--gold)
+}
+
+.cd-label{
+  text-transform:uppercase;
+  font-size:.68rem;
+  opacity:.9;
+  letter-spacing:.08em
+}
+
+.cta-row{
+  margin-top:1.25rem;
+  display:flex;
+  gap:.75rem;
+  justify-content:center;
+  flex-wrap:wrap
+}
+
+.btn{
+  appearance:none;
+  border:0;
+  border-radius:16px;
+  padding:.8rem 1.1rem;
+  font-weight:600;
+  cursor:pointer;
+  transition:transform .2s ease, box-shadow .3s ease, background .3s ease;
+  position:relative;
+  isolation:isolate
+}
+
+.btn:active{transform:translateY(1px)}
+
+.btn-primary{
+  background:var(--gold);
+  color:#fff;
+  box-shadow:0 10px 20px rgba(0,0,0,.15)
+}
+
+.btn-primary:hover{box-shadow:0 18px 30px rgba(0,0,0,.25)}
+
+.btn-ghost{
+  background:transparent;
+  border:2px solid var(--gold);
+  color:var(--gold)
+}
+
+.btn-ghost:hover{background:rgba(212,175,55,.1)}
+
+.btn::after{
+  content:"";
+  position:absolute;
+  inset:auto auto 0 50%;
+  width:0;
+  height:0;
+  border-radius:999px;
+  background:rgba(255,255,255,.2);
+  transform:translateX(-50%);
+  opacity:0;
+  pointer-events:none
+}
+
+.btn:focus-visible{
+  outline:2px dashed var(--accent3);
+  outline-offset:3px
+}
+
+.scroll-cue{
+  position:absolute;
+  left:50%;
+  bottom:18px;
+  transform:translateX(-50%);
+  color:var(--gold);
+  opacity:.85;
+  animation:bounce 1.6s infinite
+}
+
+@keyframes bounce{
+  0%,100%{transform:translate(-50%,0)}
+  50%{transform:translate(-50%,7px)}
+}
+
+/* SECTIONS */
+section{padding:clamp(36px,6vh,72px) 0}
+.anchor{scroll-margin-top:clamp(16px,4vh,32px)}
+h2{
+  font-size:clamp(1.35rem,2.4vw,1.9rem);
+  margin:0;
+  font-weight:650;
+  color:var(--brand)
+}
+
+/* Reveal on Scroll */
+.reveal{
+  opacity:0;
+  transform:translateY(14px);
+  transition:opacity .7s ease, transform .7s ease
+}
+
+.reveal.show{
+  opacity:1;
+  transform:none
+}
+
+/* INFO CARDS */
+.grid{
+  display:grid;
+  gap:1rem
+}
+
+@media (min-width:860px){
+  .grid.cols-3{
+    grid-template-columns:repeat(3,1fr)
+  }
+}
+
+.card{
+  background:var(--card);
+  border:1px solid var(--accent3);
+  border-radius:22px;
+  padding:1rem 1rem 1.1rem;
+  box-shadow:0 1px 4px rgba(0,0,0,.06);
+  transition:transform .2s ease, box-shadow .2s ease
+}
+
+.card:hover{
+  transform:translateY(-3px);
+  box-shadow:0 10px 24px rgba(0,0,0,.12)
+}
+
+.card h3{
+  margin:.2rem 0 .5rem;
+  font-size:1.05rem;
+  color:var(--accent1)
+}
+
+.muted{color:var(--muted)}
+
+/* TIMELINE */
+.timeline{
+  position:relative;
+  border-left:3px solid var(--gold);
+  margin-top:1.25rem;
+  padding-left:1rem
+}
+
+.tl-item{
+  position:relative;
+  margin:0 0 1rem 0
+}
+
+.tl-dot{
+  width:12px;
+  height:12px;
+  border-radius:50%;
+  background:var(--gold);
+  position:absolute;
+  left:-7.5px;
+  top:.35rem;
+  box-shadow:0 0 0 0 rgba(255,250,247,.6);
+  animation:pulse 2.2s infinite
+}
+
+@keyframes pulse{
+  0%{box-shadow:0 0 0 0 rgba(255,250,247,.6)}
+  70%{box-shadow:0 0 0 12px rgba(255,250,247,0)}
+  100%{box-shadow:0 0 0 0 rgba(255,250,247,0)}
+}
+
+.tl-card{
+  background:#fffaf7;
+  border:1px solid var(--accent2);
+  border-radius:18px;
+  padding:.85rem .95rem;
+  box-shadow:0 1px 2px rgba(0,0,0,.04);
+  opacity:0;
+  transform:translateX(8px);
+  transition:opacity .6s ease, transform .6s ease
+}
+
+.tl-card.show{
+  opacity:1;
+  transform:none
+}
+
+.tl-head{
+  display:flex;
+  justify-content:space-between;
+  gap:.75rem;
+  align-items:baseline
+}
+
+.tl-time{
+  color:var(--muted);
+  font-variant-numeric:tabular-nums
+}
+
+/* GALLERY */
+.gallery-head{
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-between;
+  margin-bottom:.75rem
+}
+
+.gallery{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+  gap:1rem
+}
+
+.thumb{
+  position:relative;
+  margin:0;
+  border-radius:18px;
+  overflow:hidden;
+  border:2px solid var(--gold);
+  box-shadow:0 1px 2px rgba(0,0,0,.08)
+}
+
+.thumb img{
+  width:100%;
+  height:100%;
+  aspect-ratio:3/2;
+  object-fit:cover;
+  transition:transform .35s ease, filter .35s ease;
+  display:block;
+  filter:saturate(.96) contrast(1.02)
+}
+
+.thumb:hover img{
+  transform:scale(1.03) rotate(.2deg)
+}
+
+.thumb button{
+  display:block;
+  border:0;
+  background:transparent;
+  padding:0;
+  width:100%;
+  cursor:pointer;
+  height:100%
+}
+
+.gallery-note{
+  font-size:.85rem;
+  color:var(--muted)
+}
+
+/* DARK CTA */
 .dark{
   position: relative;
   isolation: isolate;
@@ -189,20 +439,46 @@ footer{border-top:3px solid var(--gold);background:#c5ac98}
   color: #ffffff;
   padding: clamp(36px,6vh,72px) 0;
 }
+
 .dark::before{
   content:"";
-  position:absolute; inset:0;
-  pointer-events:none; z-index:0;
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  z-index:0;
   background:
     linear-gradient(to top, rgba(255,255,255,.06), rgba(255,255,255,0) 40%),
     radial-gradient(120% 80% at 50% 10%, rgba(255,255,255,.04), transparent 60%);
 }
-.dark > .container{ position: relative; z-index: 1; }
-.dark h2{ color:#fffaf7; text-shadow: 0 1px 2px rgba(0,0,0,.25); }
-.dark p,.dark li{ color: color-mix(in oklab, #ffffff); }
-.dark ul{ padding-left: 1.1rem; margin: .5rem 0 0; }
-.dark li{ margin:.3rem 0; }
-.dark li::marker{ color: var(--accent3); }
+
+.dark > .container{
+  position: relative;
+  z-index: 1;
+}
+
+.dark h2{
+  color:#fffaf7;
+  text-shadow: 0 1px 2px rgba(0,0,0,.25);
+}
+
+.dark p,
+.dark li{
+  color: color-mix(in oklab, #ffffff);
+}
+
+.dark ul{
+  padding-left: 1.1rem;
+  margin: .5rem 0 0;
+}
+
+.dark li{
+  margin:.3rem 0;
+}
+
+.dark li::marker{
+  color: var(--accent3);
+}
+
 .dark .badge{
   display:inline-block;
   background: color-mix(in oklab, var(--accent2) 82%, black 18%);
@@ -213,20 +489,18 @@ footer{border-top:3px solid var(--gold);background:#c5ac98}
   font-weight:600;
   box-shadow: 0 4px 18px rgba(0,0,0,.25);
 }
-.dark a{ color: var(--accent3); text-underline-offset: 3px; text-decoration-thickness: 1px; }
-.dark a:hover{ color:#fff; }
-.dark .map-embed{
-  border-radius: 16px;
-  border: 2px solid rgba(255,250,247,.25);
-  box-shadow: 0 10px 30px rgba(0,0,0,.35);
-  filter: grayscale(100%) brightness(.9) contrast(1.05) saturate(.9);
-  transition: filter .35s ease, transform .35s ease, box-shadow .35s ease;
+
+.dark a{
+  color: var(--accent3);
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
 }
-.dark .map-embed:hover{ filter: grayscale(0%) brightness(1); transform: translateY(-2px); box-shadow: 0 14px 36px rgba(0,0,0,.45); }
 
-@media (max-width: 859px){ .dark .grid{ gap: 1rem; } }
+.dark a:hover{
+  color:#fff;
+}
 
-/* ======= FOOTER – näher an die Header-Hues ======= */
+/* FOOTER */
 footer{
   border-top: 3px solid var(--gold);
   background: linear-gradient(
@@ -236,41 +510,191 @@ footer{
   );
   color: #fffaf7;
 }
-.footer-inner p.muted{ color: color-mix(in oklab, #fffaf7 75%, black 25%); }
-.nav a{ color:#fffaf7; font-weight:600; opacity:.9; transition: opacity .2s ease, color .2s ease; }
-.nav a:hover{ color: var(--accent3); opacity:1; }
 
-/* Feinheiten */
-.dark .btn,.dark .btn-ghost{ border-color: rgba(255,250,247,.7); color: #fffaf7; }
-.dark .btn:hover,.dark .btn-ghost:hover{ background: rgba(255,250,247,.08); }
+.footer-inner{
+  display:flex;
+  gap:1rem;
+  flex-wrap:wrap;
+  align-items:center;
+  justify-content:space-between;
+  padding:1rem 0
+}
 
-.hero__content{ z-index:3; }
-/* Fallback: Parallax & Kenburns aus bei reduzierter Bewegung */
+.footer-inner p.muted{
+  color: color-mix(in oklab, #fffaf7 75%, black 25%);
+}
+
+.nav a{
+  color:#fffaf7;
+  font-weight:600;
+  opacity:.9;
+  transition: opacity .2s ease, color .2s ease;
+  text-decoration:none;
+  margin-right:1rem
+}
+
+.nav a:hover{
+  color: var(--accent3);
+  opacity:1;
+}
+
+/* LIGHTBOX */
+.lightbox{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.92);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:1rem;
+  z-index:40
+}
+
+.lightbox.open{
+  display:flex
+}
+
+.lightbox img{
+  max-width:92vw;
+  max-height:85vh;
+  border-radius:12px;
+  box-shadow:0 20px 50px rgba(0,0,0,.5);
+  border:2px solid var(--gold)
+}
+
+.lb-btn{
+  position:absolute;
+  top:50%;
+  transform:translateY(-50%);
+  border:0;
+  background:rgba(240,170,138,.25);
+  color:#fff;
+  padding:.75rem 1rem;
+  border-radius:999px;
+  cursor:pointer
+}
+
+.lb-prev{left:1rem}
+.lb-next{right:1rem}
+.lb-close{
+  top:1rem;
+  right:1rem;
+  transform:none;
+  background:var(--gold)
+}
+
+/* MINI MAP */
+.map-wrap{margin-top:.6rem}
+
+.map-links{
+  margin-top:.4rem;
+  font-size:.9rem
+}
+
+.map-links a{
+  color:var(--gold);
+  text-decoration:none
+}
+
+.map-links a:hover{opacity:.9}
+
+.map-embed {
+  width: 100%;
+  aspect-ratio: 25 / 9;
+  border: 0;
+  border-radius: 14px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, .06);
+  filter: grayscale(100%);
+  transition: filter 0.3s ease;
+}
+
+.map-embed:hover {
+  filter: brightness(1);
+}
+
+.dark .map-embed{
+  border-radius: 16px;
+  border: 2px solid rgba(255,250,247,.25);
+  box-shadow: 0 10px 30px rgba(0,0,0,.35);
+  filter: grayscale(100%) brightness(.9) contrast(1.05) saturate(.9);
+  transition: filter .35s ease, transform .35s ease, box-shadow .35s ease;
+}
+
+.dark .map-embed:hover{
+  filter: grayscale(0%) brightness(1);
+  transform: translateY(-2px);
+  box-shadow: 0 14px 36px rgba(0,0,0,.45);
+}
+
+@media (max-width: 859px){
+  .dark .grid{
+    gap: 1rem;
+  }
+}
+
+.dark .btn,
+.dark .btn-ghost{
+  border-color: rgba(255,250,247,.7);
+  color: #fffaf7;
+}
+
+.dark .btn:hover,
+.dark .btn-ghost:hover{
+  background: rgba(255,250,247,.08);
+}
+
 @media (prefers-reduced-motion: reduce){
-  .hero__bg, .hero__fg { transform:none !important; animation:none !important; }
+  .hero__bg,
+  .hero__fg {
+    transform:none !important;
+    animation:none !important;
+  }
 }
+
 @media (max-width: 859px) {
-  .grid.cols-3 .card:first-child { margin-top: clamp(1rem, 4vw, 2rem); }
-  section[aria-label="Tagesablauf"] { margin-top: 2.5rem; }
+  .grid.cols-3 .card:first-child {
+    margin-top: clamp(1rem, 4vw, 2rem);
+  }
+
+  section[aria-label="Tagesablauf"] {
+    margin-top: 2.5rem;
+  }
 }
-section[aria-label="Galerie"] { margin-top: 2.5rem; }
-/* iOS: Light Filters & Content-Visibility für Offscreen-Sektionen */
+
+section[aria-label="Galerie"] {
+  margin-top: 2.5rem;
+}
+
 @media (hover:none) and (pointer:coarse){
-  .hero__fg{ filter: drop-shadow(0 10px 20px rgba(0,0,0,.28)); }
-  .hero__bg{ filter: contrast(.95) saturate(1.02) brightness(.95); }
+  .hero__fg{
+    filter: drop-shadow(0 10px 20px rgba(0,0,0,.28));
+  }
+
+  .hero__bg{
+    filter: contrast(.95) saturate(1.02) brightness(.95);
+  }
 }
 
-/* Große Sektionen erst rendern, wenn sie in Sicht kommen */
-section, .timeline, .gallery { content-visibility: auto; contain-intrinsic-size: 800px; }
+section,
+.timeline,
+.gallery {
+  content-visibility: auto;
+  contain-intrinsic-size: 800px;
+}
 
-/* Verhindert Alpha-Bleeding/teure Repaints beim Overlay */
-.hero__overlay, .hero__fade { will-change: opacity; }
-/* Verhindert seitliche Gesten-Konflikte, lässt vertikales Scrollen explizit zu */
-#hero { touch-action: pan-y; }
+.hero__overlay,
+.hero__fade {
+  will-change: opacity;
+}
 
-/* Falls du das Rubber-Band ganz unterbinden willst (nur moderne iOS-Safari): */
-html, body { overscroll-behavior-y: none; } /* optional – verändert das Scrollgefühl global */
+#hero {
+  touch-action: pan-y;
+}
 
+html,
+body {
+  overscroll-behavior-y: none;
+}
 
 .dresscode-colors {
   display: flex;
@@ -295,7 +719,7 @@ html, body { overscroll-behavior-y: none; } /* optional – verändert das Scrol
 .whatsapp-links {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px; /* Abstand zwischen den Buttons */
+  gap: 10px;
   margin-top: 10px;
 }
 
@@ -305,27 +729,27 @@ html, body { overscroll-behavior-y: none; } /* optional – verändert das Scrol
 
 /* ===== Transparenz/Glass für unteren Bereich & Footer ===== */
 @supports (backdrop-filter: blur(1px)) {
-  /* Unterer (dunkler) Abschnitt */
   .dark{
-    background: transparent;            /* macht die Fläche durchlässig */
+    background: transparent;
     position: relative;
     isolation: isolate;
   }
+
   .dark::before{
-    /* deine vorhandenen Highlights bleiben, wir machen sie glasig */
-    opacity: .68;                        /* Transparenz */
+    opacity: .68;
     backdrop-filter: blur(12px) saturate(1.05);
     -webkit-backdrop-filter: blur(12px) saturate(1.05);
     border-top: 1px solid rgba(255,250,247,.18);
     border-bottom: 1px solid rgba(0,0,0,.12);
-    z-index: 0;                          /* unter Content */
-  }
-  .dark > .container,
-  .dark .map-wrap{                       /* Content bleibt scharf über dem Blur */
-    position: relative; z-index: 1;
+    z-index: 0;
   }
 
-  /* Footer – halbtransparent + Blur */
+  .dark > .container,
+  .dark .map-wrap{
+    position: relative;
+    z-index: 1;
+  }
+
   footer{
     background: linear-gradient(
       180deg,
@@ -337,11 +761,16 @@ html, body { overscroll-behavior-y: none; } /* optional – verändert das Scrol
     border-top: 1px solid rgba(255,250,247,.6);
     box-shadow: 0 -10px 30px rgba(0,0,0,.18) inset;
   }
-  .footer-inner p.muted{ color: color-mix(in oklab, #fffaf7 80%, black 20%); }
-  .nav a{ opacity:.95; }
+
+  .footer-inner p.muted{
+    color: color-mix(in oklab, #fffaf7 80%, black 20%);
+  }
+
+  .nav a{
+    opacity:.95;
+  }
 }
 
-/* Fallback ohne Backdrop-Filter: leichte Transparenz ohne Blur */
 @supports not (backdrop-filter: blur(1px)) {
   .dark{
     background: linear-gradient(
@@ -350,6 +779,7 @@ html, body { overscroll-behavior-y: none; } /* optional – verändert das Scrol
       rgba(176,139,115,.92) 100%
     );
   }
+
   footer{
     background: linear-gradient(
       180deg,
@@ -359,36 +789,64 @@ html, body { overscroll-behavior-y: none; } /* optional – verändert das Scrol
   }
 }
 
-
 /* Keyframes */
-@keyframes slide-up{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
-@keyframes fade-in{from{opacity:0}to{opacity:1}}
+@keyframes slide-up{
+  from{opacity:0;transform:translateY(16px)}
+  to{opacity:1;transform:none}
+}
+
+@keyframes fade-in{
+  from{opacity:0}
+  to{opacity:1}
+}
   </style>
 </head>
+
 <body>
   <div class="progress" id="progress" aria-hidden="true"></div>
+
   <!-- HERO -->
   <header class="hero" role="banner" id="hero">
-   <img class="hero__bg" src="./hintergrund2.png" alt="Sommerlicher Park" />
-  <img class="hero__fg" src="./paar.png" alt="" aria-hidden="true" />
-  <div class="hero__overlay" aria-hidden="true"></div>
-  <div class="hero__fade" aria-hidden="true"></div>
+    <img class="hero__bg" src="./hintergrund2.png" alt="Sommerlicher Park" />
+    <img class="hero__fg" src="./paar.png" alt="" aria-hidden="true" />
+    <div class="hero__overlay" aria-hidden="true"></div>
+    <div class="hero__fade" aria-hidden="true"></div>
 
     <div class="hero__content">
       <div>
         <p class="kicker">Save the Date</p>
         <h1 class="headline">Denise &amp; Chris</h1>
-        <p class="subline"><span id="eventDateText">Samstag, 19. September 2026</span> · Wesendorf</p>
+        <p class="subline">
+          <span id="eventDateText">Samstag, 19. September 2026</span> · Wesendorf
+        </p>
+
         <div class="countdown" aria-live="polite" aria-atomic="true">
-          <div class="cd-box" style="--delay:.05s" title="Tage"><div class="cd-val" id="dVal">00</div><div class="cd-label">Tage</div></div>
-          <div class="cd-box" style="--delay:.15s" title="Stunden"><div class="cd-val" id="hVal">00</div><div class="cd-label">Stunden</div></div>
-          <div class="cd-box" style="--delay:.25s" title="Minuten"><div class="cd-val" id="mVal">00</div><div class="cd-label">Min.</div></div>
-          <div class="cd-box" style="--delay:.35s" title="Sekunden"><div class="cd-val" id="sVal">00</div><div class="cd-label">Sek.</div></div>
+          <div class="cd-box" style="--delay:.05s" title="Tage">
+            <div class="cd-val" id="dVal">00</div>
+            <div class="cd-label">Tage</div>
+          </div>
+
+          <div class="cd-box" style="--delay:.15s" title="Stunden">
+            <div class="cd-val" id="hVal">00</div>
+            <div class="cd-label">Stunden</div>
+          </div>
+
+          <div class="cd-box" style="--delay:.25s" title="Minuten">
+            <div class="cd-val" id="mVal">00</div>
+            <div class="cd-label">Min.</div>
+          </div>
+
+          <div class="cd-box" style="--delay:.35s" title="Sekunden">
+            <div class="cd-val" id="sVal">00</div>
+            <div class="cd-label">Sek.</div>
+          </div>
         </div>
+
         <div class="cta-row">
           <a class="btn btn-ghost" href="#details">Details</a>
         </div>
       </div>
+
       <div class="scroll-cue">Scroll ↓</div>
     </div>
   </header>
@@ -400,7 +858,7 @@ html, body { overscroll-behavior-y: none; } /* optional – verändert das Scrol
         <h3>Wann?</h3>
         <p>
           <strong>Samstag, 19. September 2026</strong><br />
-          Einlass ab <strong>... Uhr</strong>, Trauung <strong>... Uhr</strong>
+          Einlass ab <strong>13:30 Uhr</strong>, Trauung <strong>14:00 Uhr</strong>
         </p>
       </article>
 
@@ -414,26 +872,71 @@ html, body { overscroll-behavior-y: none; } /* optional – verändert das Scrol
 
       <article class="card reveal" style="transition-delay:.16s; text-align: center;">
         <h3>Dresscode</h3>
-        <p>Festlich sommerlich, gerne könnt ihr euch an folgenden Farben orientieren:</p>
+        <p>
+          Festlich sommerlich, gerne könnt ihr euch an folgenden Farben orientieren:
+        </p>
+
+        <p><strong>Für Frauen</strong></p>
         <div class="dresscode-colors">
-        <span class="color-box"><img src="./farben/1.png" alt="Farbton 1"></span>
-        <span class="color-box"><img src="./farben/2.png" alt="Farbton 2"></span>
-        <span class="color-box"><img src="./farben/3.png" alt="Farbton 3"></span>
-        <span class="color-box"><img src="./farben/4.png" alt="Farbton 4"></span>
-        <span class="color-box"><img src="./farben/5.png" alt="Farbton 5"></span>
+          <span class="color-box"><img src="./farben/1.png" alt="Farbton 1"></span>
+          <span class="color-box"><img src="./farben/2.png" alt="Farbton 2"></span>
+          <span class="color-box"><img src="./farben/3.png" alt="Farbton 3"></span>
+          <span class="color-box"><img src="./farben/4.png" alt="Farbton 4"></span>
+          <span class="color-box"><img src="./farben/5.png" alt="Farbton 5"></span>
         </div>
+
+        <p style="margin-top:14px;"><strong>Für Männer</strong></p>
+        <p class="muted">Schwarz, Weiß und Beige</p>
       </article>
-  </div>
-</section>
+    </div>
+  </section>
+
   <!-- TIMELINE -->
   <section class="container" aria-label="Tagesablauf">
     <h2 class="reveal">Tagesablauf</h2>
+
     <ol class="timeline" style="color: #706463; list-style:none; padding-left:1rem">
       <li class="tl-item">
         <div class="tl-dot" aria-hidden="true"></div>
-        <div class="tl-card" id="tl1">
-          <div class="tl-head"><h3>Details folgen bald</h3><time class="tl-time">00:00</time></div>
-          <p class="muted">...</p>
+        <div class="tl-card">
+          <div class="tl-head">
+            <h3>Einlass</h3>
+            <time class="tl-time">13:30 Uhr</time>
+          </div>
+          <p class="muted">Ankommen und Einstimmen auf unseren besonderen Tag.</p>
+        </div>
+      </li>
+
+      <li class="tl-item">
+        <div class="tl-dot" aria-hidden="true"></div>
+        <div class="tl-card">
+          <div class="tl-head">
+            <h3>Trauung</h3>
+            <time class="tl-time">14:00 Uhr</time>
+          </div>
+          <p class="muted">Unsere Trauung beginnt.</p>
+        </div>
+      </li>
+
+      <li class="tl-item">
+        <div class="tl-dot" aria-hidden="true"></div>
+        <div class="tl-card">
+          <div class="tl-head">
+            <h3>Sektempfang &amp; Fotos</h3>
+            <time class="tl-time">15:00 Uhr</time>
+          </div>
+          <p class="muted">Gemeinsames Anstoßen und Erinnerungen festhalten.</p>
+        </div>
+      </li>
+
+      <li class="tl-item">
+        <div class="tl-dot" aria-hidden="true"></div>
+        <div class="tl-card">
+          <div class="tl-head">
+            <h3>Feier</h3>
+            <time class="tl-time">17:00 Uhr</time>
+          </div>
+          <p class="muted">Wir feiern gemeinsam mit euch.</p>
         </div>
       </li>
     </ol>
@@ -441,14 +944,32 @@ html, body { overscroll-behavior-y: none; } /* optional – verändert das Scrol
 
   <!-- GALLERY -->
   <section class="container anchor" id="galerie" aria-label="Galerie">
-    <div class="gallery-head">
-      <h2 class="reveal">Galerie</h2>
-    </div>
+    <div class="gallery-head"></div>
+
     <div class="gallery" id="gallery">
-      <figure class="thumb reveal"><button data-index="0"><img loading="lazy" src="./1.png" alt="Bild 1" width="1600" height="1067"/></button></figure>
-      <figure class="thumb reveal"><button data-index="1"><img loading="lazy" src="./2.png" alt="Bild 2" width="1600" height="1067"/></button></figure>
-      <figure class="thumb reveal"><button data-index="2"><img loading="lazy" src="./3.png" alt="Bild 3" width="1600" height="1067"/></button></figure>
-      <figure class="thumb reveal"><button data-index="3"><img loading="lazy" src="./4.png" alt="Bild 4" width="1600" height="1067"/></button></figure>
+      <figure class="thumb reveal">
+        <button data-index="0">
+          <img loading="lazy" src="./1.png" alt="Bild 1" width="1600" height="1067"/>
+        </button>
+      </figure>
+
+      <figure class="thumb reveal">
+        <button data-index="1">
+          <img loading="lazy" src="./2.png" alt="Bild 2" width="1600" height="1067"/>
+        </button>
+      </figure>
+
+      <figure class="thumb reveal">
+        <button data-index="2">
+          <img loading="lazy" src="./3.png" alt="Bild 3" width="1600" height="1067"/>
+        </button>
+      </figure>
+
+      <figure class="thumb reveal">
+        <button data-index="3">
+          <img loading="lazy" src="./4.png" alt="Bild 4" width="1600" height="1067"/>
+        </button>
+      </figure>
     </div>
   </section>
 
@@ -465,10 +986,12 @@ html, body { overscroll-behavior-y: none; } /* optional – verändert das Scrol
             <li>...</li>
           </ul>
         </div>
-         <div class="reveal" style="transition-delay:.08s">
+
+        <div class="reveal" style="transition-delay:.08s">
           <h2>Geschenkidee</h2>
           <p>Wir freuen uns riesig, dass ihr diesen besonderen Tag mit uns verbringt!</p>
-          <p>Wer uns eine Freude machen möchte, darf gerne zu unseren Flitterwochen beisteuern. 💛</p>
+          <p>Wer uns eine Freude machen möchte, darf gerne zu unseren Flitterwochen beisteuern. 💛</p>
+
           <h2>Fragen?</h2>
           <div class="whatsapp-links">
             <a 
@@ -479,6 +1002,7 @@ html, body { overscroll-behavior-y: none; } /* optional – verändert das Scrol
             >
               Schreibt unserer Trauzeugin Michelle
             </a>
+
             <a 
               class="badge" 
               href="https://wa.me/491755883342?text=Hallo%20Denise%20und%20Chris,%20ich%20habe%20eine%20Frage%20zur%20Hochzeit%20🙂" 
@@ -487,17 +1011,19 @@ html, body { overscroll-behavior-y: none; } /* optional – verändert das Scrol
             >
               Schreibt uns
             </a>
+          </div>
         </div>
       </div>
-    </div>
-    <div class="map-wrap reveal" aria-label="Karte der Eventlocation">
-      <iframe
-        class="map-embed"
-        loading="lazy"
-        referrerpolicy="no-referrer-when-downgrade"
-        src="https://www.google.com/maps?q=52.5838375,10.5228697&hl=de&z=15&output=embed"
-        allowfullscreen>
-      </iframe>
+
+      <div class="map-wrap reveal" aria-label="Karte der Eventlocation">
+        <iframe
+          class="map-embed"
+          loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade"
+          src="https://www.google.com/maps?q=52.5838375,10.5228697&hl=de&z=15&output=embed"
+          allowfullscreen>
+        </iframe>
+      </div>
     </div>
   </section>
 
@@ -505,9 +1031,9 @@ html, body { overscroll-behavior-y: none; } /* optional – verändert das Scrol
   <footer>
     <div class="container footer-inner">
       <p class="muted">© <span id="year"></span> Denise &amp; Chris</p>
+
       <nav class="nav">
         <a href="#details">Details</a>
-        <a href="#galerie">Galerie</a>
         <a href="mailto:hello@example.com?subject=Kontakt%20Denise%20%26%20Chris">Kontakt</a>
       </nav>
     </div>
@@ -525,29 +1051,41 @@ html, body { overscroll-behavior-y: none; } /* optional – verändert das Scrol
   // =====================
   // Konfiguration
   // =====================
-  const EVENT_DATE = new Date('2026-09-19T14:00:00'); // <- Anpassen
+  const EVENT_DATE = new Date('2026-09-19T14:00:00');
   const EVENT_CITY = 'Gifhorn';
 
   // =====================
   // Helfer
   // =====================
-  const $ = (s,scope=document)=>scope.querySelector(s);
-  const $$ = (s,scope=document)=>Array.from(scope.querySelectorAll(s));
-  function pad(n){return String(n).padStart(2,'0')}
-  function updateCountdown(){
+  const $ = (s, scope = document) => scope.querySelector(s);
+  const $$ = (s, scope = document) => Array.from(scope.querySelectorAll(s));
+
+  function pad(n) {
+    return String(n).padStart(2, '0');
+  }
+
+  function updateCountdown() {
     const now = new Date();
     const diff = Math.max(0, EVENT_DATE - now);
-    const d = Math.floor(diff / (1000*60*60*24));
-    const h = Math.floor(diff / (1000*60*60)) % 24;
-    const m = Math.floor(diff / (1000*60)) % 60;
+
+    const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const h = Math.floor(diff / (1000 * 60 * 60)) % 24;
+    const m = Math.floor(diff / (1000 * 60)) % 60;
     const s = Math.floor(diff / 1000) % 60;
+
     $('#dVal').textContent = pad(d);
     $('#hVal').textContent = pad(h);
     $('#mVal').textContent = pad(m);
     $('#sVal').textContent = pad(s);
   }
-  function formatDateLong(d){
-    return d.toLocaleDateString('de-DE',{weekday:'long', day:'2-digit', month:'long', year:'numeric'});
+
+  function formatDateLong(d) {
+    return d.toLocaleDateString('de-DE', {
+      weekday: 'long',
+      day: '2-digit',
+      month: 'long',
+      year: 'numeric'
+    });
   }
 
   // =====================
@@ -555,45 +1093,62 @@ html, body { overscroll-behavior-y: none; } /* optional – verändert das Scrol
   // =====================
   $('#year').textContent = new Date().getFullYear();
   $('#eventDateText').textContent = `${formatDateLong(EVENT_DATE)} · ${EVENT_CITY}`;
+
   updateCountdown();
   setInterval(updateCountdown, 1000);
 
   // =====================
-  // Reveal on Scroll (Sections, Cards, Timeline, Gallery)
+  // Reveal on Scroll
   // =====================
-  const ioReveal = new IntersectionObserver((entries)=>{
-    for (const e of entries){
-      if(e.isIntersecting){ e.target.classList.add('show'); ioReveal.unobserve(e.target); }
+  const ioReveal = new IntersectionObserver((entries) => {
+    for (const e of entries) {
+      if (e.isIntersecting) {
+        e.target.classList.add('show');
+        ioReveal.unobserve(e.target);
+      }
     }
   }, { threshold: 0.18 });
-  $$('.reveal, .tl-card').forEach(el=> ioReveal.observe(el));
+
+  $$('.reveal, .tl-card').forEach(el => ioReveal.observe(el));
 
   // =====================
   // Scroll-Progress
   // =====================
   const progress = $('#progress');
-  function setProgress(){
+
+  function setProgress() {
     const h = document.documentElement;
-    const scrolled = (h.scrollTop)/(h.scrollHeight - h.clientHeight);
-    progress.style.width = (scrolled*100).toFixed(2) + '%';
+    const scrolled = h.scrollTop / (h.scrollHeight - h.clientHeight);
+    progress.style.width = (scrolled * 100).toFixed(2) + '%';
   }
-  document.addEventListener('scroll', setProgress, {passive:true});
+
+  document.addEventListener('scroll', setProgress, { passive: true });
   setProgress();
 
   // =====================
-  // Button Ripple (simple)
+  // Button Ripple
   // =====================
-  $$('.btn').forEach(btn=>{
-    btn.addEventListener('pointerdown', (e)=>{
+  $$('.btn').forEach(btn => {
+    btn.addEventListener('pointerdown', (e) => {
       const rect = btn.getBoundingClientRect();
       const r = Math.max(rect.width, rect.height);
-      const after = getComputedStyle(btn, '::after');
+
       btn.style.setProperty('--r-x', (e.clientX - rect.left) + 'px');
       btn.style.setProperty('--r', r + 'px');
+
       btn.animate([
-        { clipPath: `circle(0 at ${e.clientX-rect.left}px ${e.clientY-rect.top}px)`, opacity: .35 },
-        { clipPath: `circle(${r}px at ${e.clientX-rect.left}px ${e.clientY-rect.top}px)`, opacity: 0 }
-      ], { duration: 550, easing: 'cubic-bezier(.2,.8,.2,1)' });
+        {
+          clipPath: `circle(0 at ${e.clientX - rect.left}px ${e.clientY - rect.top}px)`,
+          opacity: .35
+        },
+        {
+          clipPath: `circle(${r}px at ${e.clientX - rect.left}px ${e.clientY - rect.top}px)`,
+          opacity: 0
+        }
+      ], {
+        duration: 550,
+        easing: 'cubic-bezier(.2,.8,.2,1)'
+      });
     });
   });
 
@@ -606,60 +1161,117 @@ html, body { overscroll-behavior-y: none; } /* optional – verändert das Scrol
   const lbPrev = $('#lbPrev');
   const lbNext = $('#lbNext');
   const lbClose = $('#lbClose');
+
   let active = null;
 
-  function openLightbox(index){
+  function openLightbox(index) {
     active = index;
     lbImg.src = gallery[active].querySelector('img').src;
     lb.classList.add('open');
     lbImg.focus?.();
   }
-  function closeLightbox(){ lb.classList.remove('open'); active = null; }
-  function prev(){ if(active===null) return; active = (active - 1 + gallery.length) % gallery.length; lbImg.src = gallery[active].querySelector('img').src; }
-  function next(){ if(active===null) return; active = (active + 1) % gallery.length; lbImg.src = gallery[active].querySelector('img').src; }
 
-  gallery.forEach((btn, i)=>{ btn.addEventListener('click', ()=> openLightbox(i)); });
-  lbPrev.addEventListener('click', (e)=>{ e.stopPropagation(); prev(); });
-  lbNext.addEventListener('click', (e)=>{ e.stopPropagation(); next(); });
-  lbClose.addEventListener('click', (e)=>{ e.stopPropagation(); closeLightbox(); });
-  lb.addEventListener('click', closeLightbox);
-  document.addEventListener('keydown', (e)=>{
-    if(!lb.classList.contains('open')) return;
-    if(e.key==='Escape') closeLightbox();
-    if(e.key==='ArrowLeft') prev();
-    if(e.key==='ArrowRight') next();
+  function closeLightbox() {
+    lb.classList.remove('open');
+    active = null;
+  }
+
+  function prev() {
+    if (active === null) return;
+    active = (active - 1 + gallery.length) % gallery.length;
+    lbImg.src = gallery[active].querySelector('img').src;
+  }
+
+  function next() {
+    if (active === null) return;
+    active = (active + 1) % gallery.length;
+    lbImg.src = gallery[active].querySelector('img').src;
+  }
+
+  gallery.forEach((btn, i) => {
+    btn.addEventListener('click', () => openLightbox(i));
   });
-  // Touch swipe
-  let sx = 0; let dx = 0; const SWIPE = 48;
-  lb.addEventListener('touchstart', e=>{ sx = e.touches[0].clientX; dx = 0; }, {passive:true});
-  lb.addEventListener('touchmove', e=>{ dx = e.touches[0].clientX - sx; }, {passive:true});
-  lb.addEventListener('touchend', ()=>{ if(Math.abs(dx)>SWIPE){ dx<0?next():prev(); } });
+
+  lbPrev.addEventListener('click', (e) => {
+    e.stopPropagation();
+    prev();
+  });
+
+  lbNext.addEventListener('click', (e) => {
+    e.stopPropagation();
+    next();
+  });
+
+  lbClose.addEventListener('click', (e) => {
+    e.stopPropagation();
+    closeLightbox();
+  });
+
+  lb.addEventListener('click', closeLightbox);
+
+  document.addEventListener('keydown', (e) => {
+    if (!lb.classList.contains('open')) return;
+
+    if (e.key === 'Escape') closeLightbox();
+    if (e.key === 'ArrowLeft') prev();
+    if (e.key === 'ArrowRight') next();
+  });
+
+  let sx = 0;
+  let dx = 0;
+  const SWIPE = 48;
+
+  lb.addEventListener('touchstart', e => {
+    sx = e.touches[0].clientX;
+    dx = 0;
+  }, { passive: true });
+
+  lb.addEventListener('touchmove', e => {
+    dx = e.touches[0].clientX - sx;
+  }, { passive: true });
+
+  lb.addEventListener('touchend', () => {
+    if (Math.abs(dx) > SWIPE) {
+      dx < 0 ? next() : prev();
+    }
+  });
 
   // =====================
-  // Parallax (Hero)
+  // Parallax Hero
   // =====================
-  (function(){
+  (function() {
     const hero = $('#hero');
-    const bg   = hero.querySelector('.hero__bg');
-    const fg   = hero.querySelector('.hero__fg');
+    const bg = hero.querySelector('.hero__bg');
+    const fg = hero.querySelector('.hero__fg');
 
     if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
     let ticking = false;
-    function setParallax(){
+
+    function setParallax() {
       const y = window.scrollY - hero.offsetTop;
       const clampedY = Math.max(-window.innerHeight, Math.min(y, hero.offsetHeight));
-      const bgOffset = clampedY * 0.18;  // Hintergrund langsamer
-      const fgOffset = clampedY * 0.35;  // Vordergrund schneller
+
+      const bgOffset = clampedY * 0.18;
+      const fgOffset = clampedY * 0.35;
+
       bg.style.setProperty('--py', `${bgOffset}px`);
       fg.style.setProperty('--py', `${fgOffset}px`);
+
       ticking = false;
     }
-    function onScrollOrResize(){ if (!ticking){ window.requestAnimationFrame(setParallax); ticking = true; } }
-    const io = new IntersectionObserver(entries=>{
-      entries.forEach(entry=>{
-        if(entry.isIntersecting){
-          window.addEventListener('scroll', onScrollOrResize, {passive:true});
+
+    function onScrollOrResize() {
+      if (!ticking) {
+        window.requestAnimationFrame(setParallax);
+        ticking = true;
+      }
+    }
+
+    const io = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          window.addEventListener('scroll', onScrollOrResize, { passive: true });
           window.addEventListener('resize', onScrollOrResize);
           setParallax();
         } else {
@@ -668,9 +1280,9 @@ html, body { overscroll-behavior-y: none; } /* optional – verändert das Scrol
         }
       });
     }, { root: null, threshold: 0 });
+
     io.observe(hero);
   })();
   </script>
 </body>
 </html>
-
