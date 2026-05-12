@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Foreverfuchs DJ Ansicht</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="config.js"></script>
+</head>
+<body>
+  <div class="wrap dj">
+    <section class="hero">
+      <div class="badge">🎧 DJ Dashboard</div>
+      <div class="names">Denise & Chris</div>
+      <h1>Live<br><span class="gold">Musikwünsche</span></h1>
+      <p class="subtitle">Öffne die gewünschten Songs direkt in Spotify oder YouTube.</p>
+    </section>
+
+    <section class="card">
+      <div class="section-head">
+        <h2>Wunschliste</h2>
+        <div class="actions">
+          <span class="count" id="count">0</span>
+          <button class="secondary" id="refreshBtn">Aktualisieren</button>
+        </div>
+      </div>
+      <div class="list" id="wishList"></div>
+    </section>
+
+    <div class="footer">Foreverfuchs Hochzeit • DJ-Ansicht</div>
+  </div>
+
+  <div class="toast error-toast" id="errorToast"></div>
+
+  <script>
+    const cfg = window.FOREVERFUCHS_CONFIG;
+    const supabaseClient = supabase.createClient(cfg.SUPABASE_URL, cfg.SUPABASE_KEY);
+
+    const wishList = document.getElementById("wishList");
+    const count = document.getElementById("count");
+    const refreshBtn = document.getElementById("refreshBtn");
+    const errorToast = document.getElementById("errorToast");
+
+    function escapeHtml(text = "") {
+      return String(text).replace(/[&<>"']/g, char => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#039;"
+      }[char]));
+    }
+
+    function showError(message) {
+      errorToast.textContent = message;
+      errorToast.style.display = "block";
+      setTimeout(() => errorToast.style.display = "none", 6500);
+    }
+
+    function spotifySearchUrl(title, artist = "") {
+      return `https://open.spotify.com/search/${encodeURIComponent((title + " " + artist).trim())}`;
+    }
+
+    function youtubeSearchUrl(title, artist = "") {
+      return `https://www.youtube.com/results?search_query=${encodeURIComponent((title + " " + artist).trim())}`;
+    }
+
+    async function loadRequests() {
+      const { data, error } = await supabaseClient
+        .from(cfg.TABLE_NAME)
+        .select("*")
+        .order("created_at", { ascending: false });
+
+      if (error) {
+        wishList.innerHTML = `<div class="empty">Fehler beim Laden: ${escapeHtml(error.message)}</div>`;
+        return;
+      }
+
+      render(data || []);
+    }
+
+    function render(wishes) {
+      count.textContent = wishes.length;
+      wishList.innerHTML = "";
+
+      if (!wishes.length) {
+        wishList.innerHTML = `<div class="empty">Noch keine Musikwünsche.</div>`;
+        return;
+      }
+
+      wishes.forEach(wish => {
+        const title = wish.title || "Musikwunsch";
+        const artist = wish.artist || "";
+        const img = wish.cover_url || wish.thumbnail || "https://placehold.co/600x600/241b0b/f7d774?text=Song";
+        const spotifyUrl = wish.spotify_url || spotifySearchUrl(title, artist);
+        const youtubeUrl = wish.youtube_url || youtubeSearchUrl(title, artist);
+
+        const item = document.createElement("div");
+        item.className = "wish";
+        item.innerHTML = `
+          <img src="${img}" alt="Cover">
+          <div>
+            <h3>${escapeHtml(title)}</h3>
+            <p>${escapeHtml(artist)} ${wish.album ? "• " + escapeHtml(wish.album) : ""}</p>
+            ${wish.message ? `<p>${escapeHtml(wish.message)}</p>` : ""}
+            <p>${new Date(wish.created_at).toLocaleString("de-DE")}</p>
+            <div class="actions">
+              <a class="link-button secondary" href="${spotifyUrl}" target="_blank" rel="noopener">Spotify</a>
+              <a class="link-button secondary" href="${youtubeUrl}" target="_blank" rel="noopener">YouTube</a>
+            </div>
+          </div>
+        `;
+        wishList.appendChild(item);
+      });
+    }
+
+    refreshBtn.onclick = loadRequests;
+
+    supabaseClient
+      .channel("music_requests_dj")
+      .on("postgres_changes", { event: "*", schema: "public", table: cfg.TABLE_NAME }, loadRequests)
+      .subscribe();
+
+    loadRequests();
+  </script>
+</body>
+</html>
