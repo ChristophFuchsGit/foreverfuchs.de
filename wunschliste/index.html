@@ -144,6 +144,7 @@
         const match = url.match(pattern);
         if (match && match[1]) return match[1];
       }
+
       return null;
     }
 
@@ -181,10 +182,12 @@
         showError("Supabase config.js fehlt oder ist unvollständig.");
         return false;
       }
+
       if (cfg.SUPABASE_KEY.includes("DEIN_SUPABASE")) {
         showError("Bitte in config.js zuerst den Supabase-Key eintragen.");
         return false;
       }
+
       return true;
     }
 
@@ -246,12 +249,11 @@
         renderSearchResults(songs);
       } catch (err) {
         console.error(err);
-        searchResults.innerHTML = `
-          <div class="empty">
-            Suche auf diesem Handy blockiert.<br><br>
-            Bitte nutze oben „Link einfügen“ und kopiere einen Spotify- oder YouTube-Link.
-          </div>
-        `;
+
+        const manual = makeManualResults(query);
+        renderSearchResults(manual);
+
+        showError("Die automatische Suche wurde blockiert. Du kannst den Song trotzdem als Wunsch senden.");
       } finally {
         searchBtn.disabled = false;
         searchBtn.textContent = "Suchen";
@@ -261,6 +263,13 @@
 
     async function mobileSafeSearch(query) {
       const errors = [];
+
+      try {
+        const results = await searchMusicBrainz(query);
+        if (results.length) return results;
+      } catch (err) {
+        errors.push(err);
+      }
 
       try {
         const results = await searchItunesFetch(query);
@@ -286,10 +295,52 @@
       throw errors[0] || new Error("Keine Suche möglich");
     }
 
+    async function searchMusicBrainz(query) {
+      const url = `https://musicbrainz.org/ws/2/recording/?query=${encodeURIComponent(query)}&fmt=json&limit=20`;
+
+      const res = await fetch(url, {
+        cache: "no-store",
+        headers: {
+          "Accept": "application/json"
+        }
+      });
+
+      if (!res.ok) throw new Error("MusicBrainz Suche fehlgeschlagen");
+
+      const json = await res.json();
+      const recordings = json.recordings || [];
+
+      return recordings
+        .filter(item => item && item.title)
+        .map(item => {
+          const artist = item["artist-credit"]
+            ? item["artist-credit"].map(a => a.name).filter(Boolean).join(", ")
+            : "Unbekannter Künstler";
+
+          const album = item.releases && item.releases.length
+            ? item.releases[0].title || ""
+            : "";
+
+          return {
+            trackName: item.title || query,
+            artistName: artist || "Unbekannter Künstler",
+            collectionName: album,
+            artworkUrl100: "https://placehold.co/600x600/241b0b/f7d774?text=Song",
+            previewUrl: "",
+            isMusicBrainzResult: true
+          };
+        });
+    }
+
     async function searchItunesFetch(query) {
       const url = `https://itunes.apple.com/search?term=${encodeURIComponent(query)}&media=music&entity=song&limit=20&country=DE`;
-      const res = await fetch(url, { cache: "no-store" });
+
+      const res = await fetch(url, {
+        cache: "no-store"
+      });
+
       if (!res.ok) throw new Error("iTunes fetch blocked");
+
       const json = await res.json();
       return json.results || [];
     }
@@ -308,11 +359,15 @@
 
         function cleanup() {
           delete window[callbackName];
-          if (script.parentNode) script.parentNode.removeChild(script);
+
+          if (script.parentNode) {
+            script.parentNode.removeChild(script);
+          }
         }
 
         script.onerror = function() {
           if (done) return;
+
           done = true;
           cleanup();
           reject(new Error("JSONP blocked"));
@@ -323,6 +378,7 @@
 
         setTimeout(() => {
           if (done) return;
+
           done = true;
           cleanup();
           reject(new Error("JSONP timeout"));
@@ -352,8 +408,10 @@
 
       results.forEach(song => {
         const cover = (song.artworkUrl100 || "https://placehold.co/600x600/241b0b/f7d774?text=Song").replace("100x100bb", "600x600bb");
+
         const div = document.createElement("div");
         div.className = "result";
+
         div.innerHTML = `
           <img src="${cover}" alt="Cover">
           <div>
@@ -396,7 +454,7 @@
           preview_url: song.previewUrl || "",
           spotify_url: spotifySearchUrl(title, artist),
           youtube_url: youtubeSearchUrl(title, artist),
-          source: "search",
+          source: song.isMusicBrainzResult ? "musicbrainz" : song.isManualSearchResult ? "manual" : "search",
           video_id: "",
           thumbnail: "",
           message: messageSearch.value.trim(),
@@ -514,8 +572,10 @@
         const img = wish.cover_url || wish.thumbnail || "https://placehold.co/120x120/241b0b/f7d774?text=Song";
         const title = wish.title || "Musikwunsch";
         const artist = wish.artist || "";
+
         const item = document.createElement("div");
         item.className = "wish";
+
         item.innerHTML = `
           <img src="${img}" alt="Cover">
           <div>
@@ -523,18 +583,22 @@
             <p>${escapeHtml(artist)}</p>
           </div>
         `;
+
         wishList.appendChild(item);
       });
     }
 
     searchBtn.onclick = searchSongs;
+
     songSearch.addEventListener("input", () => {
       clearTimeout(searchTimeout);
       searchTimeout = setTimeout(searchSongs, 550);
     });
+
     songSearch.addEventListener("keydown", e => {
       if (e.key === "Enter") searchSongs();
     });
+
     musicUrl.addEventListener("input", updateLinkPreview);
     sendLinkBtn.onclick = addLinkWish;
 
