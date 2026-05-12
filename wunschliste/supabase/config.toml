@@ -1,0 +1,4 @@
+project_id = "qdbmhzpqvemmpxcihihz"
+
+[functions.itunes-search]
+verify_jwt = true
