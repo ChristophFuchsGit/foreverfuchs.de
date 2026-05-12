@@ -111,12 +111,12 @@
     const count = document.getElementById("count");
 
     let searchTimeout = null;
-    let cooldownInterval = null;
 
     document.querySelectorAll(".tab").forEach(tab => {
       tab.addEventListener("click", () => {
         document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
         document.querySelectorAll(".panel").forEach(p => p.classList.remove("active"));
+
         tab.classList.add("active");
         document.getElementById(tab.dataset.tab).classList.add("active");
       });
@@ -167,14 +167,20 @@
     function showToast(message = "Wunsch gesendet 🎉") {
       toast.textContent = message;
       toast.style.display = "block";
-      setTimeout(() => toast.style.display = "none", 1800);
+
+      setTimeout(() => {
+        toast.style.display = "none";
+      }, 1800);
     }
 
     function showError(message) {
       console.error(message);
       errorToast.textContent = message;
       errorToast.style.display = "block";
-      setTimeout(() => errorToast.style.display = "none", 6500);
+
+      setTimeout(() => {
+        errorToast.style.display = "none";
+      }, 6500);
     }
 
     function configReady() {
@@ -201,6 +207,7 @@
       const totalSeconds = Math.ceil(ms / 1000);
       const min = Math.floor(totalSeconds / 60);
       const sec = String(totalSeconds % 60).padStart(2, "0");
+
       return `${min}:${sec}`;
     }
 
@@ -229,7 +236,7 @@
       }
     }
 
-    cooldownInterval = setInterval(updateCooldownUi, 1000);
+    setInterval(updateCooldownUi, 1000);
 
     async function searchSongs() {
       const query = songSearch.value.trim();
@@ -265,7 +272,7 @@
       const errors = [];
 
       try {
-        const results = await searchMusicBrainz(query);
+        const results = await searchItunesJsonp(query);
         if (results.length) return results;
       } catch (err) {
         errors.push(err);
@@ -278,87 +285,39 @@
         errors.push(err);
       }
 
-      try {
-        const results = await searchItunesJsonp(query);
-        if (results.length) return results;
-      } catch (err) {
-        errors.push(err);
-      }
+      const manual = makeManualResults(query);
 
-      try {
-        const results = makeManualResults(query);
-        if (results.length) return results;
-      } catch (err) {
-        errors.push(err);
+      if (manual.length) {
+        return manual;
       }
 
       throw errors[0] || new Error("Keine Suche möglich");
     }
 
-    async function searchMusicBrainz(query) {
-      const url = `https://musicbrainz.org/ws/2/recording/?query=${encodeURIComponent(query)}&fmt=json&limit=20`;
-
-      const res = await fetch(url, {
-        cache: "no-store",
-        headers: {
-          "Accept": "application/json"
-        }
-      });
-
-      if (!res.ok) throw new Error("MusicBrainz Suche fehlgeschlagen");
-
-      const json = await res.json();
-      const recordings = json.recordings || [];
-
-      return recordings
-        .filter(item => item && item.title)
-        .map(item => {
-          const artist = item["artist-credit"]
-            ? item["artist-credit"].map(a => a.name).filter(Boolean).join(", ")
-            : "Unbekannter Künstler";
-
-          const album = item.releases && item.releases.length
-            ? item.releases[0].title || ""
-            : "";
-
-          return {
-            trackName: item.title || query,
-            artistName: artist || "Unbekannter Künstler",
-            collectionName: album,
-            artworkUrl100: "https://placehold.co/600x600/241b0b/f7d774?text=Song",
-            previewUrl: "",
-            isMusicBrainzResult: true
-          };
-        });
-    }
-
-    async function searchItunesFetch(query) {
-      const url = `https://itunes.apple.com/search?term=${encodeURIComponent(query)}&media=music&entity=song&limit=20&country=DE`;
-
-      const res = await fetch(url, {
-        cache: "no-store"
-      });
-
-      if (!res.ok) throw new Error("iTunes fetch blocked");
-
-      const json = await res.json();
-      return json.results || [];
-    }
-
     function searchItunesJsonp(query) {
       return new Promise((resolve, reject) => {
-        const callbackName = "ffSearch_" + Date.now() + "_" + Math.floor(Math.random() * 10000);
+        const callbackName =
+          "ffItunesSearch_" + Date.now() + "_" + Math.floor(Math.random() * 100000);
+
         const script = document.createElement("script");
-        let done = false;
+        let finished = false;
 
         window[callbackName] = function(data) {
-          done = true;
+          if (finished) return;
+
+          finished = true;
           cleanup();
-          resolve(data.results || []);
+
+          const results = Array.isArray(data.results) ? data.results : [];
+          resolve(results);
         };
 
         function cleanup() {
-          delete window[callbackName];
+          try {
+            delete window[callbackName];
+          } catch (e) {
+            window[callbackName] = undefined;
+          }
 
           if (script.parentNode) {
             script.parentNode.removeChild(script);
@@ -366,30 +325,69 @@
         }
 
         script.onerror = function() {
-          if (done) return;
+          if (finished) return;
 
-          done = true;
+          finished = true;
           cleanup();
-          reject(new Error("JSONP blocked"));
+          reject(new Error("iTunes JSONP blockiert"));
         };
 
-        script.src = `https://itunes.apple.com/search?term=${encodeURIComponent(query)}&media=music&entity=song&limit=20&country=DE&callback=${callbackName}`;
+        const params = new URLSearchParams({
+          term: query,
+          media: "music",
+          entity: "song",
+          limit: "25",
+          country: "DE",
+          lang: "de_de",
+          explicit: "Yes",
+          callback: callbackName
+        });
+
+        script.src = "https://itunes.apple.com/search?" + params.toString();
         document.body.appendChild(script);
 
         setTimeout(() => {
-          if (done) return;
+          if (finished) return;
 
-          done = true;
+          finished = true;
           cleanup();
-          reject(new Error("JSONP timeout"));
-        }, 7000);
+          reject(new Error("iTunes JSONP Timeout"));
+        }, 10000);
       });
+    }
+
+    async function searchItunesFetch(query) {
+      const params = new URLSearchParams({
+        term: query,
+        media: "music",
+        entity: "song",
+        limit: "25",
+        country: "DE",
+        lang: "de_de",
+        explicit: "Yes"
+      });
+
+      const url = "https://itunes.apple.com/search?" + params.toString();
+
+      const res = await fetch(url, {
+        method: "GET",
+        cache: "no-store",
+        mode: "cors"
+      });
+
+      if (!res.ok) {
+        throw new Error("iTunes fetch blockiert");
+      }
+
+      const json = await res.json();
+
+      return Array.isArray(json.results) ? json.results : [];
     }
 
     function makeManualResults(query) {
       return [{
         trackName: query,
-        artistName: "Song suchen",
+        artistName: "Song manuell wünschen",
         collectionName: "",
         artworkUrl100: "https://placehold.co/600x600/241b0b/f7d774?text=Song",
         previewUrl: "",
@@ -407,7 +405,8 @@
       }
 
       results.forEach(song => {
-        const cover = (song.artworkUrl100 || "https://placehold.co/600x600/241b0b/f7d774?text=Song").replace("100x100bb", "600x600bb");
+        const cover = (song.artworkUrl100 || "https://placehold.co/600x600/241b0b/f7d774?text=Song")
+          .replace("100x100bb", "600x600bb");
 
         const div = document.createElement("div");
         div.className = "result";
@@ -440,7 +439,9 @@
         return;
       }
 
-      const cover = (song.artworkUrl100 || "https://placehold.co/600x600/241b0b/f7d774?text=Song").replace("100x100bb", "600x600bb");
+      const cover = (song.artworkUrl100 || "https://placehold.co/600x600/241b0b/f7d774?text=Song")
+        .replace("100x100bb", "600x600bb");
+
       const title = song.trackName || "";
       const artist = song.isManualSearchResult ? "" : (song.artistName || "");
 
@@ -454,7 +455,7 @@
           preview_url: song.previewUrl || "",
           spotify_url: spotifySearchUrl(title, artist),
           youtube_url: youtubeSearchUrl(title, artist),
-          source: song.isMusicBrainzResult ? "musicbrainz" : song.isManualSearchResult ? "manual" : "search",
+          source: song.isManualSearchResult ? "manual" : "itunes",
           video_id: "",
           thumbnail: "",
           message: messageSearch.value.trim(),
@@ -596,7 +597,9 @@
     });
 
     songSearch.addEventListener("keydown", e => {
-      if (e.key === "Enter") searchSongs();
+      if (e.key === "Enter") {
+        searchSongs();
+      }
     });
 
     musicUrl.addEventListener("input", updateLinkPreview);
