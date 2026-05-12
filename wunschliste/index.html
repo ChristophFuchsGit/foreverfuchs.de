@@ -111,12 +111,12 @@
     const count = document.getElementById("count");
 
     let searchTimeout = null;
+    let cooldownInterval = null;
 
     document.querySelectorAll(".tab").forEach(tab => {
       tab.addEventListener("click", () => {
         document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
         document.querySelectorAll(".panel").forEach(p => p.classList.remove("active"));
-
         tab.classList.add("active");
         document.getElementById(tab.dataset.tab).classList.add("active");
       });
@@ -144,7 +144,6 @@
         const match = url.match(pattern);
         if (match && match[1]) return match[1];
       }
-
       return null;
     }
 
@@ -167,20 +166,14 @@
     function showToast(message = "Wunsch gesendet 🎉") {
       toast.textContent = message;
       toast.style.display = "block";
-
-      setTimeout(() => {
-        toast.style.display = "none";
-      }, 1800);
+      setTimeout(() => toast.style.display = "none", 1800);
     }
 
     function showError(message) {
       console.error(message);
       errorToast.textContent = message;
       errorToast.style.display = "block";
-
-      setTimeout(() => {
-        errorToast.style.display = "none";
-      }, 6500);
+      setTimeout(() => errorToast.style.display = "none", 6500);
     }
 
     function configReady() {
@@ -188,12 +181,10 @@
         showError("Supabase config.js fehlt oder ist unvollständig.");
         return false;
       }
-
       if (cfg.SUPABASE_KEY.includes("DEIN_SUPABASE")) {
         showError("Bitte in config.js zuerst den Supabase-Key eintragen.");
         return false;
       }
-
       return true;
     }
 
@@ -207,7 +198,6 @@
       const totalSeconds = Math.ceil(ms / 1000);
       const min = Math.floor(totalSeconds / 60);
       const sec = String(totalSeconds % 60).padStart(2, "0");
-
       return `${min}:${sec}`;
     }
 
@@ -236,7 +226,7 @@
       }
     }
 
-    setInterval(updateCooldownUi, 1000);
+    cooldownInterval = setInterval(updateCooldownUi, 1000);
 
     async function searchSongs() {
       const query = songSearch.value.trim();
@@ -256,11 +246,12 @@
         renderSearchResults(songs);
       } catch (err) {
         console.error(err);
-
-        const manual = makeManualResults(query);
-        renderSearchResults(manual);
-
-        showError("Die automatische Suche wurde blockiert. Du kannst den Song trotzdem als Wunsch senden.");
+        searchResults.innerHTML = `
+          <div class="empty">
+            Suche auf diesem Handy blockiert.<br><br>
+            Bitte nutze oben „Link einfügen“ und kopiere einen Spotify- oder YouTube-Link.
+          </div>
+        `;
       } finally {
         searchBtn.disabled = false;
         searchBtn.textContent = "Suchen";
@@ -270,6 +261,13 @@
 
     async function mobileSafeSearch(query) {
       const errors = [];
+
+      try {
+        const results = await searchItunesProxy(query);
+        if (results.length) return results;
+      } catch (err) {
+        errors.push(err);
+      }
 
       try {
         const results = await searchItunesJsonp(query);
@@ -286,74 +284,34 @@
       }
 
       const manual = makeManualResults(query);
-
-      if (manual.length) {
-        return manual;
-      }
+      if (manual.length) return manual;
 
       throw errors[0] || new Error("Keine Suche möglich");
     }
 
-    function searchItunesJsonp(query) {
-      return new Promise((resolve, reject) => {
-        const callbackName =
-          "ffItunesSearch_" + Date.now() + "_" + Math.floor(Math.random() * 100000);
-
-        const script = document.createElement("script");
-        let finished = false;
-
-        window[callbackName] = function(data) {
-          if (finished) return;
-
-          finished = true;
-          cleanup();
-
-          const results = Array.isArray(data.results) ? data.results : [];
-          resolve(results);
-        };
-
-        function cleanup() {
-          try {
-            delete window[callbackName];
-          } catch (e) {
-            window[callbackName] = undefined;
-          }
-
-          if (script.parentNode) {
-            script.parentNode.removeChild(script);
-          }
-        }
-
-        script.onerror = function() {
-          if (finished) return;
-
-          finished = true;
-          cleanup();
-          reject(new Error("iTunes JSONP blockiert"));
-        };
-
-        const params = new URLSearchParams({
-          term: query,
-          media: "music",
-          entity: "song",
-          limit: "25",
-          country: "DE",
-          lang: "de_de",
-          explicit: "Yes",
-          callback: callbackName
-        });
-
-        script.src = "https://itunes.apple.com/search?" + params.toString();
-        document.body.appendChild(script);
-
-        setTimeout(() => {
-          if (finished) return;
-
-          finished = true;
-          cleanup();
-          reject(new Error("iTunes JSONP Timeout"));
-        }, 10000);
+    async function searchItunesProxy(query) {
+      const params = new URLSearchParams({
+        term: query
       });
+
+      const url = `${cfg.SUPABASE_URL}/functions/v1/itunes-search?${params.toString()}`;
+
+      const res = await fetch(url, {
+        method: "GET",
+        cache: "no-store",
+        headers: {
+          "Accept": "application/json",
+          "apikey": cfg.SUPABASE_KEY,
+          "Authorization": `Bearer ${cfg.SUPABASE_KEY}`
+        }
+      });
+
+      if (!res.ok) {
+        throw new Error("Supabase iTunes Proxy Fehler");
+      }
+
+      const json = await res.json();
+      return Array.isArray(json.results) ? json.results : [];
     }
 
     async function searchItunesFetch(query) {
@@ -375,19 +333,69 @@
         mode: "cors"
       });
 
-      if (!res.ok) {
-        throw new Error("iTunes fetch blockiert");
-      }
+      if (!res.ok) throw new Error("iTunes fetch blocked");
 
       const json = await res.json();
-
       return Array.isArray(json.results) ? json.results : [];
+    }
+
+    function searchItunesJsonp(query) {
+      return new Promise((resolve, reject) => {
+        const callbackName = "ffItunesSearch_" + Date.now() + "_" + Math.floor(Math.random() * 100000);
+        const script = document.createElement("script");
+        let finished = false;
+
+        window[callbackName] = function(data) {
+          if (finished) return;
+          finished = true;
+          cleanup();
+          const results = Array.isArray(data.results) ? data.results : [];
+          resolve(results);
+        };
+
+        function cleanup() {
+          try {
+            delete window[callbackName];
+          } catch (e) {
+            window[callbackName] = undefined;
+          }
+          if (script.parentNode) script.parentNode.removeChild(script);
+        }
+
+        script.onerror = function() {
+          if (finished) return;
+          finished = true;
+          cleanup();
+          reject(new Error("iTunes JSONP blocked"));
+        };
+
+        const params = new URLSearchParams({
+          term: query,
+          media: "music",
+          entity: "song",
+          limit: "25",
+          country: "DE",
+          lang: "de_de",
+          explicit: "Yes",
+          callback: callbackName
+        });
+
+        script.src = "https://itunes.apple.com/search?" + params.toString();
+        document.body.appendChild(script);
+
+        setTimeout(() => {
+          if (finished) return;
+          finished = true;
+          cleanup();
+          reject(new Error("iTunes JSONP timeout"));
+        }, 10000);
+      });
     }
 
     function makeManualResults(query) {
       return [{
         trackName: query,
-        artistName: "Song manuell wünschen",
+        artistName: "Song suchen",
         collectionName: "",
         artworkUrl100: "https://placehold.co/600x600/241b0b/f7d774?text=Song",
         previewUrl: "",
@@ -405,12 +413,9 @@
       }
 
       results.forEach(song => {
-        const cover = (song.artworkUrl100 || "https://placehold.co/600x600/241b0b/f7d774?text=Song")
-          .replace("100x100bb", "600x600bb");
-
+        const cover = (song.artworkUrl100 || "https://placehold.co/600x600/241b0b/f7d774?text=Song").replace("100x100bb", "600x600bb");
         const div = document.createElement("div");
         div.className = "result";
-
         div.innerHTML = `
           <img src="${cover}" alt="Cover">
           <div>
@@ -439,9 +444,7 @@
         return;
       }
 
-      const cover = (song.artworkUrl100 || "https://placehold.co/600x600/241b0b/f7d774?text=Song")
-        .replace("100x100bb", "600x600bb");
-
+      const cover = (song.artworkUrl100 || "https://placehold.co/600x600/241b0b/f7d774?text=Song").replace("100x100bb", "600x600bb");
       const title = song.trackName || "";
       const artist = song.isManualSearchResult ? "" : (song.artistName || "");
 
@@ -573,10 +576,8 @@
         const img = wish.cover_url || wish.thumbnail || "https://placehold.co/120x120/241b0b/f7d774?text=Song";
         const title = wish.title || "Musikwunsch";
         const artist = wish.artist || "";
-
         const item = document.createElement("div");
         item.className = "wish";
-
         item.innerHTML = `
           <img src="${img}" alt="Cover">
           <div>
@@ -584,24 +585,18 @@
             <p>${escapeHtml(artist)}</p>
           </div>
         `;
-
         wishList.appendChild(item);
       });
     }
 
     searchBtn.onclick = searchSongs;
-
     songSearch.addEventListener("input", () => {
       clearTimeout(searchTimeout);
       searchTimeout = setTimeout(searchSongs, 550);
     });
-
     songSearch.addEventListener("keydown", e => {
-      if (e.key === "Enter") {
-        searchSongs();
-      }
+      if (e.key === "Enter") searchSongs();
     });
-
     musicUrl.addEventListener("input", updateLinkPreview);
     sendLinkBtn.onclick = addLinkWish;
 
