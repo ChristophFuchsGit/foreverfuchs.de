@@ -242,21 +242,14 @@
       searchResults.innerHTML = `<div class="empty">Suche läuft...</div>`;
 
       try {
-        const res = await fetch(`/.netlify/functions/search?q=${encodeURIComponent(query)}`);
-        const json = await res.json();
-
-        if (!res.ok) {
-          throw new Error(json.error || "Suche fehlgeschlagen");
-        }
-
-        renderSearchResults(json.results || []);
+        const songs = await mobileSafeSearch(query);
+        renderSearchResults(songs);
       } catch (err) {
         console.error(err);
         searchResults.innerHTML = `
           <div class="empty">
-            Suche fehlgeschlagen.<br><br>
-            ${escapeHtml(err.message || "Unbekannter Fehler")}<br><br>
-            Bitte später nochmal probieren oder YouTube/Spotify-Link einfügen.
+            Suche auf diesem Handy blockiert.<br><br>
+            Bitte nutze oben „Link einfügen“ und kopiere einen Spotify- oder YouTube-Link.
           </div>
         `;
       } finally {
@@ -264,6 +257,88 @@
         searchBtn.textContent = "Suchen";
         updateCooldownUi();
       }
+    }
+
+    async function mobileSafeSearch(query) {
+      const errors = [];
+
+      try {
+        const results = await searchItunesFetch(query);
+        if (results.length) return results;
+      } catch (err) {
+        errors.push(err);
+      }
+
+      try {
+        const results = await searchItunesJsonp(query);
+        if (results.length) return results;
+      } catch (err) {
+        errors.push(err);
+      }
+
+      try {
+        const results = makeManualResults(query);
+        if (results.length) return results;
+      } catch (err) {
+        errors.push(err);
+      }
+
+      throw errors[0] || new Error("Keine Suche möglich");
+    }
+
+    async function searchItunesFetch(query) {
+      const url = `https://itunes.apple.com/search?term=${encodeURIComponent(query)}&media=music&entity=song&limit=20&country=DE`;
+      const res = await fetch(url, { cache: "no-store" });
+      if (!res.ok) throw new Error("iTunes fetch blocked");
+      const json = await res.json();
+      return json.results || [];
+    }
+
+    function searchItunesJsonp(query) {
+      return new Promise((resolve, reject) => {
+        const callbackName = "ffSearch_" + Date.now() + "_" + Math.floor(Math.random() * 10000);
+        const script = document.createElement("script");
+        let done = false;
+
+        window[callbackName] = function(data) {
+          done = true;
+          cleanup();
+          resolve(data.results || []);
+        };
+
+        function cleanup() {
+          delete window[callbackName];
+          if (script.parentNode) script.parentNode.removeChild(script);
+        }
+
+        script.onerror = function() {
+          if (done) return;
+          done = true;
+          cleanup();
+          reject(new Error("JSONP blocked"));
+        };
+
+        script.src = `https://itunes.apple.com/search?term=${encodeURIComponent(query)}&media=music&entity=song&limit=20&country=DE&callback=${callbackName}`;
+        document.body.appendChild(script);
+
+        setTimeout(() => {
+          if (done) return;
+          done = true;
+          cleanup();
+          reject(new Error("JSONP timeout"));
+        }, 7000);
+      });
+    }
+
+    function makeManualResults(query) {
+      return [{
+        trackName: query,
+        artistName: "Song suchen",
+        collectionName: "",
+        artworkUrl100: "https://placehold.co/600x600/241b0b/f7d774?text=Song",
+        previewUrl: "",
+        isManualSearchResult: true
+      }];
     }
 
     function renderSearchResults(results) {
@@ -276,7 +351,7 @@
       }
 
       results.forEach(song => {
-        const cover = (song.artworkUrl100 || "").replace("100x100bb", "600x600bb");
+        const cover = (song.artworkUrl100 || "https://placehold.co/600x600/241b0b/f7d774?text=Song").replace("100x100bb", "600x600bb");
         const div = document.createElement("div");
         div.className = "result";
         div.innerHTML = `
@@ -289,7 +364,7 @@
 
         const btn = document.createElement("button");
         btn.className = "primary wish-button";
-        btn.textContent = "Wünschen";
+        btn.textContent = song.isManualSearchResult ? "Als Wunsch senden" : "Wünschen";
         btn.onclick = () => addSongWish(song);
 
         div.appendChild(btn);
@@ -307,9 +382,9 @@
         return;
       }
 
-      const cover = (song.artworkUrl100 || "").replace("100x100bb", "600x600bb");
+      const cover = (song.artworkUrl100 || "https://placehold.co/600x600/241b0b/f7d774?text=Song").replace("100x100bb", "600x600bb");
       const title = song.trackName || "";
-      const artist = song.artistName || "";
+      const artist = song.isManualSearchResult ? "" : (song.artistName || "");
 
       try {
         const { error } = await supabaseClient.from(cfg.TABLE_NAME).insert({
